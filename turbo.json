@@ -7,15 +7,27 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
+    "check": {
+      "dependsOn": ["^check"]
     },
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "format": {
+      "dependsOn": ["^format"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "lint:fix": {
+      "dependsOn": ["^lint:fix"]
+    },
+    "test": {
+      "dependsOn": ["^test"]
+    },
+    "type-check": {
+      "dependsOn": ["^type-check"]
     }
   }
 }

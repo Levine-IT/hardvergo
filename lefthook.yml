@@ -1,0 +1,10 @@
+pre-commit:
+  commands:
+    check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: pnpm check
+      stage_fixed: true
+    type-check:
+      glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc}"
+      run: pnpm type-check
+      stage_fixed: true

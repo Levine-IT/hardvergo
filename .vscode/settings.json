@@ -3,5 +3,10 @@
     {
       "mode": "auto"
     }
-  ]
+  ],
+  "prettier.enable": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "quickfix.biome": "explicit"
+  }
 }

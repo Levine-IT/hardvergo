@@ -1,0 +1,4 @@
+{
+  "recommendations": ["biomejs.biome", "lokalise.i18n-ally"],
+  "unwantedRecommendations": ["esbenp.prettier-vscode", "jackie-onai.i18next"]
+}
