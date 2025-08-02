@@ -6,7 +6,22 @@
     "useIgnoreFile": false
   },
   "files": {
-    "ignoreUnknown": false
+    "ignoreUnknown": false,
+    "includes": [
+      "**",
+      "!node_modules",
+      "!**/*.gen.*",
+      "!**/*.d.ts",
+      "!**/*.d.mts",
+      "!**/*.d.cts",
+      "!**/*.d.tsx",
+      "!**/*.d.jsx",
+      "!**/dist/**",
+      "!**/build/**",
+      "!**/coverage/**",
+      "!**/out/**",
+      "!**/lib/**"
+    ]
   },
   "formatter": {
     "enabled": true,
