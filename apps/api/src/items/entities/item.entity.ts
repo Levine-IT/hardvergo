@@ -1,23 +1,71 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class AttributeValues {
-	@ApiProperty()
-	id: string;
+export class ImageVariant {
+	@ApiProperty({ description: "Image URL for this variant" })
+	url: string;
 
-	@ApiProperty()
-	type: string;
+	@ApiProperty({ description: "Image width in pixels" })
+	width: number;
 
-	@ApiProperty()
-	value: string;
+	@ApiProperty({ description: "Image height in pixels" })
+	height: number;
+
+	@ApiProperty({ description: "File size in bytes" })
+	fileSize: number;
+
+	@ApiProperty({ enum: ['webp', 'jpeg', 'png', 'avif'], description: "Image format" })
+	format: 'webp' | 'jpeg' | 'png' | 'avif';
 }
 
 
-export class Media {
-	@ApiProperty()
-	photos: string;
+export class MediaImageData {
+	@ApiProperty({ description: "Alt text for accessibility" })
+	altText: string;
 
-	@ApiProperty()
-	videos: string;
+	@ApiProperty({ type: [ImageVariant], description: "Different sizes and formats of the same image" })
+	variants: ImageVariant[];
+}
+
+export class MediaVideoData {
+	@ApiProperty({ description: "Video URL" })
+	url: string;
+
+	@ApiProperty({ description: "Video duration in seconds", nullable: true })
+	duration?: number;
+
+	@ApiProperty({ description: "Video thumbnail URL" })
+	thumbnailUrl: string;
+}
+
+export class MediaItem {
+	@ApiProperty({ description: "Unique identifier for this media item" })
+	id: string;
+
+	@ApiProperty({ description: "Original filename" })
+	filename: string;
+
+	@ApiProperty({ enum: ['image', 'video'], description: "Type of media" })
+	type: 'image' | 'video';
+
+	@ApiProperty({ description: "Order position in gallery (0-based)" })
+	order: number;
+
+	@ApiProperty({ description: "Upload timestamp" })
+	uploadedAt: Date;
+
+	@ApiProperty({ type: MediaImageData, description: "Image data (present when type is 'image')", nullable: true })
+	imageData?: MediaImageData;
+
+	@ApiProperty({ type: MediaVideoData, description: "Video data (present when type is 'video')", nullable: true })
+	videoData?: MediaVideoData;
+}
+
+export class Gallery {
+	@ApiProperty({ type: [MediaItem], description: "All media items in the gallery, ordered by the 'order' field" })
+	items: MediaItem[];
+
+	@ApiProperty({ description: "ID of the media item to use as cover (must exist in items array and be of type 'image')", nullable: true })
+	coverItemId?: string;
 }
 
 /**
@@ -33,18 +81,23 @@ export class Item {
 	@ApiProperty({ description: "Meant in HUF" })
 	price: number;
 
-	@ApiProperty()
+	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
 	sellerId: string;
 
-	@ApiProperty()
+	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
 	categoryId: string;
 
-	@ApiProperty({ type: Media })
-	media: Media;
+	@ApiProperty({ type: Gallery})
+	gallery: Gallery;
 
 	@ApiProperty({ description: "Cities where personal trade is avaible. If null personal trade is not avaible for that item.", nullable: true })
 	locations?: string[];
 
-	@ApiProperty({ type: [AttributeValues] })
-	numericAttributes: AttributeValues[];
+	@ApiProperty({ 
+		type: 'object', 
+		additionalProperties: true, 
+		description: 'Category-specific attributes like VRAM size, clock speed for GPUs, or other technical specifications',
+		example: { vramSize: '8', clockSpeed: '1800', manufacturer: 'NVIDIA' }
+	})
+	attributes: Record<string, any>;
 }
