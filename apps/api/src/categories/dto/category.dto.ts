@@ -1,25 +1,57 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
+import { NumericAttributeDto } from "./numeric-attribute.dto";
+import { SelectAttributeDto } from "./select-attribute.dto";
 
-/**
- * It desribes that what attributes the items in the given categories should have
- */
-export class ItemSchemaDto {}
+export class ListingAttributesDto {
+	@ApiProperty({
+		type: [NumericAttributeDto],
+		description: "Numeric attributes for items in this category",
+	})
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => NumericAttributeDto)
+	numericAttributes: NumericAttributeDto[];
 
-export class ItemAttributeDto {
-	@ApiProperty()
-	key: string;
-
-	@ApiProperty()
-	type: string; //id value / numeric
+	@ApiProperty({
+		type: [SelectAttributeDto],
+		description:
+			"Selectable attributes for items in this category. These are disctinct values that can be selected by the user.",
+	})
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => SelectAttributeDto)
+	selectAttributes: SelectAttributeDto[];
 }
 
 export class CategoryDto {
-	@ApiProperty()
+	@ApiProperty({
+		description: "URL-friendly unique identifier for the category",
+		example: "electronics",
+	})
+	key: string;
+
+	@ApiProperty({ description: "Category name", example: "Electronics" })
+	@IsString()
 	name: string;
 
-	@ApiProperty({ type: CategoryDto, nullable: true })
+	@ApiPropertyOptional({ type: CategoryDto, description: "Parent category" })
+	@IsOptional()
+	@ValidateNested()
+	@Type(() => CategoryDto)
 	parent?: CategoryDto;
 
-	@ApiProperty({ type: ItemSchemaDto })
-	itemSchema: ItemSchemaDto;
+	@ApiPropertyOptional({ type: [CategoryDto], description: "Child categories" })
+	@IsOptional()
+	@IsArray()
+	@ValidateNested({ each: true })
+	@Type(() => CategoryDto)
+	children?: CategoryDto[];
+
+	@ApiProperty({
+		type: ListingAttributesDto,
+		description: "Attributes for listings in this category",
+	})
+	listingAttributes: ListingAttributesDto;
 }
