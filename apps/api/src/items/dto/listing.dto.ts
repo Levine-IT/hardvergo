@@ -89,9 +89,9 @@ export class GalleryDto {
 }
 
 /**
- * Item represents some used product that is advertised on the website as for saley
+ * Listing represents some used product that is advertised on the website as for saley
  */
-export class ItemDto {
+export class ListingDto {
 	@ApiProperty()
 	title: string;
 
