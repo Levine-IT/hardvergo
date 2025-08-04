@@ -1,4 +1,16 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.1.3/schema.json",
-	"extends": ["../../packages/biome-config/base.json"]
+	"extends": ["../../packages/biome-config/base.json"],
+	"javascript": {
+		"parser": {
+			"unsafeParameterDecoratorsEnabled": true
+		}
+	},
+	"linter": {
+		"rules": {
+			"style": {
+				"useImportType": "off"
+			}
+		}
+	}
 }

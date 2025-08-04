@@ -32,13 +32,19 @@
   "linter": {
     "enabled": true,
     "rules": {
+      "style": {
+        "useImportType": "off"
+      },
       "recommended": true
     }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double"
-    }
+    },
+    "parser": {
+			"unsafeParameterDecoratorsEnabled": true
+		}
   },
   "assist": {
     "enabled": true,
