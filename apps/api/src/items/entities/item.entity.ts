@@ -13,16 +13,21 @@ export class ImageVariant {
 	@ApiProperty({ description: "File size in bytes" })
 	fileSize: number;
 
-	@ApiProperty({ enum: ['webp', 'jpeg', 'png', 'avif'], description: "Image format" })
-	format: 'webp' | 'jpeg' | 'png' | 'avif';
+	@ApiProperty({
+		enum: ["webp", "jpeg", "png", "avif"],
+		description: "Image format",
+	})
+	format: "webp" | "jpeg" | "png" | "avif";
 }
-
 
 export class MediaImageData {
 	@ApiProperty({ description: "Alt text for accessibility" })
 	altText: string;
 
-	@ApiProperty({ type: [ImageVariant], description: "Different sizes and formats of the same image" })
+	@ApiProperty({
+		type: [ImageVariant],
+		description: "Different sizes and formats of the same image",
+	})
 	variants: ImageVariant[];
 }
 
@@ -44,8 +49,8 @@ export class MediaItem {
 	@ApiProperty({ description: "Original filename" })
 	filename: string;
 
-	@ApiProperty({ enum: ['image', 'video'], description: "Type of media" })
-	type: 'image' | 'video';
+	@ApiProperty({ enum: ["image", "video"], description: "Type of media" })
+	type: "image" | "video";
 
 	@ApiProperty({ description: "Order position in gallery (0-based)" })
 	order: number;
@@ -53,18 +58,33 @@ export class MediaItem {
 	@ApiProperty({ description: "Upload timestamp" })
 	uploadedAt: Date;
 
-	@ApiProperty({ type: MediaImageData, description: "Image data (present when type is 'image')", nullable: true })
+	@ApiProperty({
+		type: MediaImageData,
+		description: "Image data (present when type is 'image')",
+		nullable: true,
+	})
 	imageData?: MediaImageData;
 
-	@ApiProperty({ type: MediaVideoData, description: "Video data (present when type is 'video')", nullable: true })
+	@ApiProperty({
+		type: MediaVideoData,
+		description: "Video data (present when type is 'video')",
+		nullable: true,
+	})
 	videoData?: MediaVideoData;
 }
 
 export class Gallery {
-	@ApiProperty({ type: [MediaItem], description: "All media items in the gallery, ordered by the 'order' field" })
+	@ApiProperty({
+		type: [MediaItem],
+		description: "All media items in the gallery, ordered by the 'order' field",
+	})
 	items: MediaItem[];
 
-	@ApiProperty({ description: "ID of the media item to use as cover (must exist in items array and be of type 'image')", nullable: true })
+	@ApiProperty({
+		description:
+			"ID of the media item to use as cover (must exist in items array and be of type 'image')",
+		nullable: true,
+	})
 	coverItemId?: string;
 }
 
@@ -87,17 +107,22 @@ export class Item {
 	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
 	categoryId: string;
 
-	@ApiProperty({ type: Gallery})
+	@ApiProperty({ type: Gallery })
 	gallery: Gallery;
 
-	@ApiProperty({ description: "Cities where personal trade is avaible. If null personal trade is not avaible for that item.", nullable: true })
+	@ApiProperty({
+		description:
+			"Cities where personal trade is avaible. If null personal trade is not avaible for that item.",
+		nullable: true,
+	})
 	locations?: string[];
 
-	@ApiProperty({ 
-		type: 'object', 
-		additionalProperties: true, 
-		description: 'Category-specific attributes like VRAM size, clock speed for GPUs, or other technical specifications',
-		example: { vramSize: '8', clockSpeed: '1800', manufacturer: 'NVIDIA' }
+	@ApiProperty({
+		type: "object",
+		additionalProperties: true,
+		description:
+			"Category-specific attributes like VRAM size, clock speed for GPUs, or other technical specifications",
+		example: { vramSize: "8", clockSpeed: "1800", manufacturer: "NVIDIA" },
 	})
 	attributes: Record<string, any>;
 }

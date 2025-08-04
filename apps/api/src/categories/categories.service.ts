@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class CategoriesService {
-  findAll() {
-    return `This action returns all categories`;
-  }
+	findAll() {
+		return `This action returns all categories`;
+	}
 }

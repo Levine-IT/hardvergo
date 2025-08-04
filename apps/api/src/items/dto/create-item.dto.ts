@@ -16,11 +16,12 @@ export class CreateItemDto {
 	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
 	categoryId: string;
 
-	@ApiProperty({ 
-		type: 'object', 
-		additionalProperties: true, 
-		description: 'Category-specific attributes like VRAM size, clock speed for GPUs, or other technical specifications',
-		example: { vramSize: '8', clockSpeed: '1800', manufacturer: 'NVIDIA' }
+	@ApiProperty({
+		type: "object",
+		additionalProperties: true,
+		description:
+			"Category-specific attributes like VRAM size, clock speed for GPUs, or other technical specifications",
+		example: { vramSize: "8", clockSpeed: "1800", manufacturer: "NVIDIA" },
 	})
 	attributes?: Record<string, any>;
 }

@@ -1,11 +1,9 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 /**
- * It desribes that what attributes the items in the given categories should have 
+ * It desribes that what attributes the items in the given categories should have
  */
-export class ItemSchema {
-
-}
+export class ItemSchema {}
 
 export class ItemAttribute {
 	@ApiProperty()
