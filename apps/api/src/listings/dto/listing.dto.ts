@@ -1,27 +1,43 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class ImageVariantDto {
-	@ApiProperty({ description: "Image URL for this variant" })
+	@ApiProperty({
+		description: "Image URL for this variant",
+		example: "https://example.com/images/laptop_800x600.webp",
+	})
 	url: string;
 
-	@ApiProperty({ description: "Image width in pixels" })
+	@ApiProperty({
+		description: "Image width in pixels",
+		example: 800,
+	})
 	width: number;
 
-	@ApiProperty({ description: "Image height in pixels" })
+	@ApiProperty({
+		description: "Image height in pixels",
+		example: 600,
+	})
 	height: number;
 
-	@ApiProperty({ description: "File size in bytes" })
+	@ApiProperty({
+		description: "File size in bytes",
+		example: 45320,
+	})
 	fileSize: number;
 
 	@ApiProperty({
 		enum: ["webp", "jpeg", "png", "avif"],
 		description: "Image format",
+		example: "webp",
 	})
 	format: "webp" | "jpeg" | "png" | "avif";
 }
 
 export class MediaImageDataDto {
-	@ApiProperty({ description: "Alt text for accessibility" })
+	@ApiProperty({
+		description: "Alt text for accessibility",
+		example: "Gaming laptop ASUS ROG Strix G15 front view",
+	})
 	altText: string;
 
 	@ApiProperty({
@@ -32,30 +48,56 @@ export class MediaImageDataDto {
 }
 
 export class MediaVideoDataDto {
-	@ApiProperty({ description: "Video URL" })
+	@ApiProperty({
+		description: "Video URL",
+		example: "https://example.com/videos/laptop-demo.mp4",
+	})
 	url: string;
 
-	@ApiProperty({ description: "Video duration in seconds", nullable: true })
+	@ApiProperty({
+		description: "Video duration in seconds",
+		nullable: true,
+		example: 120,
+	})
 	duration?: number;
 
-	@ApiProperty({ description: "Video thumbnail URL" })
+	@ApiProperty({
+		description: "Video thumbnail URL",
+		example: "https://example.com/thumbnails/laptop-demo.jpg",
+	})
 	thumbnailUrl: string;
 }
 
 export class MediaItemDto {
-	@ApiProperty({ description: "Unique identifier for this media item" })
+	@ApiProperty({
+		description: "Unique identifier for this media item",
+		example: "media_abc123def456",
+	})
 	id: string;
 
-	@ApiProperty({ description: "Original filename" })
+	@ApiProperty({
+		description: "Original filename",
+		example: "laptop-front-view.jpg",
+	})
 	filename: string;
 
-	@ApiProperty({ enum: ["image", "video"], description: "Type of media" })
+	@ApiProperty({
+		enum: ["image", "video"],
+		description: "Type of media",
+		example: "image",
+	})
 	type: "image" | "video";
 
-	@ApiProperty({ description: "Order position in gallery (0-based)" })
+	@ApiProperty({
+		description: "Order position in gallery (0-based)",
+		example: 0,
+	})
 	order: number;
 
-	@ApiProperty({ description: "Upload timestamp" })
+	@ApiProperty({
+		description: "Upload timestamp",
+		example: "2024-08-04T10:30:00Z",
+	})
 	uploadedAt: Date;
 
 	@ApiProperty({
@@ -84,6 +126,7 @@ export class GalleryDto {
 		description:
 			"ID of the media item to use as cover (must exist in items array and be of type 'image')",
 		nullable: true,
+		example: "media_abc123def456",
 	})
 	coverItemId?: string;
 }
@@ -92,19 +135,35 @@ export class GalleryDto {
  * Listing represents some used product that is advertised on the website as for saley
  */
 export class ListingDto {
-	@ApiProperty()
+	@ApiProperty({
+		description: "Title of the listing",
+		example: "Gaming Laptop ASUS ROG Strix G15",
+	})
 	title: string;
 
-	@ApiProperty()
+	@ApiProperty({
+		description: "Detailed description of the item",
+		example:
+			"Excellent condition gaming laptop with RTX 3070, 16GB RAM, used for 6 months only.",
+	})
 	description: string;
 
-	@ApiProperty({ description: "Meant in HUF" })
+	@ApiProperty({
+		description: "Meant in HUF",
+		example: 450000,
+	})
 	price: number;
 
-	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
+	@ApiProperty({
+		description: "ID of the user selling the item",
+		example: "mhvXdrZT4jP5T8vBxuvm75",
+	})
 	sellerId: string;
 
-	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
+	@ApiProperty({
+		description: "ID of the category this item belongs to",
+		example: "mhvXdrZT4jP5T8vBxuvm75",
+	})
 	categoryId: string;
 
 	@ApiProperty({ type: GalleryDto })
@@ -114,6 +173,7 @@ export class ListingDto {
 		description:
 			"Cities where personal trade is avaible. If null personal trade is not avaible for that item.",
 		nullable: true,
+		example: ["Budapest", "Debrecen", "Szeged"],
 	})
 	locations?: string[];
 

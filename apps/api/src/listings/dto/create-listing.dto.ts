@@ -1,19 +1,35 @@
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateListingDto {
-	@ApiProperty()
+	@ApiProperty({
+		description: "Title of the listing",
+		example: "Gaming Laptop ASUS ROG Strix G15",
+	})
 	title: string;
 
-	@ApiProperty()
+	@ApiProperty({
+		description: "Detailed description of the item",
+		example:
+			"Excellent condition gaming laptop with RTX 3070, 16GB RAM, used for 6 months only.",
+	})
 	description: string;
 
-	@ApiProperty({ description: "Meant in HUF" })
+	@ApiProperty({
+		description: "Meant in HUF",
+		example: 450000,
+	})
 	price: number;
 
-	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
+	@ApiProperty({
+		description: "ID of the user selling the item",
+		example: "mhvXdrZT4jP5T8vBxuvm75",
+	})
 	sellerId: string;
 
-	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
+	@ApiProperty({
+		description: "ID of the category this item belongs to",
+		example: "mhvXdrZT4jP5T8vBxuvm75",
+	})
 	categoryId: string;
 
 	@ApiProperty({

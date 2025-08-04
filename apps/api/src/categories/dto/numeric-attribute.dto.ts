@@ -7,22 +7,30 @@ export enum NumericAttributeType {
 }
 
 export class NumericAttributeDto {
-	@ApiProperty({ description: "Attribute name/key" })
+	@ApiProperty({
+		description: "Attribute name/key",
+		example: "vram-size",
+	})
 	@IsString()
 	key: string;
 
-	@ApiProperty({ description: "Human-readable label" })
+	@ApiProperty({
+		description: "Human-readable label",
+		example: "VRAM Size (GB)",
+	})
 	@IsString()
 	label: string;
 
 	@ApiPropertyOptional({
 		description: "Minimum value for this attribute",
+		example: 4,
 	})
 	@IsOptional()
 	minValue?: number;
 
 	@ApiPropertyOptional({
 		description: "Maximum value for this attribute",
+		example: 24,
 	})
 	@IsOptional()
 	maxValue?: number;
@@ -30,9 +38,13 @@ export class NumericAttributeDto {
 	@ApiProperty({
 		enum: NumericAttributeType,
 		description: "Type of numeric attribute",
+		example: NumericAttributeType.Integer,
 	})
 	type: NumericAttributeType;
 
-	@ApiProperty({ description: "Whether this attribute is required" })
+	@ApiProperty({
+		description: "Whether this attribute is required",
+		example: false,
+	})
 	required: boolean;
 }

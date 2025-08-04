@@ -7,11 +7,17 @@ export enum SelectAttributeType {
 }
 
 export class SelectAttributeDto {
-	@ApiProperty({ description: "Attribute name/key" })
+	@ApiProperty({
+		description: "Attribute name/key",
+		example: "cpu-manufacturer",
+	})
 	@IsString()
 	key: string;
 
-	@ApiProperty({ description: "Human-readable label" })
+	@ApiProperty({
+		description: "Human-readable label",
+		example: "CPU Manufacturer",
+	})
 	@IsString()
 	label: string;
 
@@ -24,6 +30,9 @@ export class SelectAttributeDto {
 	@IsString({ each: true })
 	values: SelectAttributeValueDto[];
 
-	@ApiProperty({ description: "Whether this attribute is required" })
+	@ApiProperty({
+		description: "Whether this attribute is required",
+		example: true,
+	})
 	required: boolean;
 }
