@@ -9,8 +9,8 @@ import {
 } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { CreateItemDto } from "./dto/create-item.dto";
+import { ItemDto } from "./dto/item.dto";
 import { UpdateItemDto } from "./dto/update-item.dto";
-import { Item } from "./entities/item.entity";
 import { ItemsService } from "./items.service";
 
 @Controller("items")
@@ -26,7 +26,7 @@ export class ItemsController {
 	@ApiOperation({ summary: "Get all items" })
 	@ApiOkResponse({
 		description: "List items with pagination",
-		type: [Item],
+		type: [ItemDto],
 	})
 	findAll() {
 		return this.itemsService.findAll();
@@ -35,7 +35,7 @@ export class ItemsController {
 	@Get(":id")
 	@ApiOperation({ summary: "Fetch item by id" })
 	@ApiOkResponse({
-		type: Item,
+		type: ItemDto,
 	})
 	findOne(@Param("id") id: string) {
 		return this.itemsService.findOne(+id);

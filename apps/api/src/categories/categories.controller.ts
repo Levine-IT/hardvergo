@@ -1,7 +1,7 @@
 import { Controller, Get } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { CategoriesService } from "./categories.service";
-import { Category } from "./entities/category.entity";
+import { CategoryDto } from "./dto/category.dto";
 
 @Controller("categories")
 export class CategoriesController {
@@ -11,7 +11,7 @@ export class CategoriesController {
 	@ApiOperation({ summary: "Get all categories" })
 	@ApiOkResponse({
 		description: "List all categories",
-		type: [Category],
+		type: [CategoryDto],
 	})
 	findAll() {
 		return this.categoriesService.findAll();

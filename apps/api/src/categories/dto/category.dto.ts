@@ -3,9 +3,9 @@ import { ApiProperty } from "@nestjs/swagger";
 /**
  * It desribes that what attributes the items in the given categories should have
  */
-export class ItemSchema {}
+export class ItemSchemaDto {}
 
-export class ItemAttribute {
+export class ItemAttributeDto {
 	@ApiProperty()
 	key: string;
 
@@ -13,13 +13,13 @@ export class ItemAttribute {
 	type: string; //id value / numeric
 }
 
-export class Category {
+export class CategoryDto {
 	@ApiProperty()
 	name: string;
 
-	@ApiProperty({ type: Category, nullable: true })
-	parent?: Category;
+	@ApiProperty({ type: CategoryDto, nullable: true })
+	parent?: CategoryDto;
 
-	@ApiProperty({ type: ItemSchema })
-	itemSchema: ItemSchema;
+	@ApiProperty({ type: ItemSchemaDto })
+	itemSchema: ItemSchemaDto;
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class ImageVariant {
+export class ImageVariantDto {
 	@ApiProperty({ description: "Image URL for this variant" })
 	url: string;
 
@@ -20,18 +20,18 @@ export class ImageVariant {
 	format: "webp" | "jpeg" | "png" | "avif";
 }
 
-export class MediaImageData {
+export class MediaImageDataDto {
 	@ApiProperty({ description: "Alt text for accessibility" })
 	altText: string;
 
 	@ApiProperty({
-		type: [ImageVariant],
+		type: [ImageVariantDto],
 		description: "Different sizes and formats of the same image",
 	})
-	variants: ImageVariant[];
+	variants: ImageVariantDto[];
 }
 
-export class MediaVideoData {
+export class MediaVideoDataDto {
 	@ApiProperty({ description: "Video URL" })
 	url: string;
 
@@ -42,7 +42,7 @@ export class MediaVideoData {
 	thumbnailUrl: string;
 }
 
-export class MediaItem {
+export class MediaItemDto {
 	@ApiProperty({ description: "Unique identifier for this media item" })
 	id: string;
 
@@ -59,26 +59,26 @@ export class MediaItem {
 	uploadedAt: Date;
 
 	@ApiProperty({
-		type: MediaImageData,
+		type: MediaImageDataDto,
 		description: "Image data (present when type is 'image')",
 		nullable: true,
 	})
-	imageData?: MediaImageData;
+	imageData?: MediaImageDataDto;
 
 	@ApiProperty({
-		type: MediaVideoData,
+		type: MediaVideoDataDto,
 		description: "Video data (present when type is 'video')",
 		nullable: true,
 	})
-	videoData?: MediaVideoData;
+	videoData?: MediaVideoDataDto;
 }
 
-export class Gallery {
+export class GalleryDto {
 	@ApiProperty({
-		type: [MediaItem],
+		type: [MediaItemDto],
 		description: "All media items in the gallery, ordered by the 'order' field",
 	})
-	items: MediaItem[];
+	items: MediaItemDto[];
 
 	@ApiProperty({
 		description:
@@ -91,7 +91,7 @@ export class Gallery {
 /**
  * Item represents some used product that is advertised on the website as for saley
  */
-export class Item {
+export class ItemDto {
 	@ApiProperty()
 	title: string;
 
@@ -107,8 +107,8 @@ export class Item {
 	@ApiProperty({ example: "mhvXdrZT4jP5T8vBxuvm75" })
 	categoryId: string;
 
-	@ApiProperty({ type: Gallery })
-	gallery: Gallery;
+	@ApiProperty({ type: GalleryDto })
+	gallery: GalleryDto;
 
 	@ApiProperty({
 		description:
