@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # MinIO S3 Emulator
+  minio:
+    image: minio/minio:latest
+    container_name: minio-s3
+    ports:
+      - "9000:9000" # MinIO API port
+      - "9001:9001" # MinIO Console port
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_DOMAIN: localhost
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
+volumes:
+  minio_data:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -6,11 +7,24 @@ import {
 	Param,
 	Patch,
 	Post,
+	UploadedFile,
+	UseInterceptors,
 } from "@nestjs/common";
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import {
+	ApiBody,
+	ApiConsumes,
+	ApiOkResponse,
+	ApiOperation,
+} from "@nestjs/swagger";
 import { CreateListingDto } from "./dto/create-listing.dto";
+import {
+	DraftImageDeleteResponseDto,
+	DraftImageUploadDto,
+} from "./dto/darft-image-upload.dto";
 import { ListingDto } from "./dto/listing.dto";
 import { UpdateItemDto } from "./dto/update-listing.dto";
+import { ListingImageService } from "./listing-image.service";
 import { ListingsService } from "./listings.service";
 
 @Controller("listings")
