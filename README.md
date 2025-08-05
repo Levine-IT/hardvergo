@@ -1,135 +1,268 @@
-# Turborepo starter
+<div align="center">
 
-This Turborepo starter is maintained by the Turborepo core team.
+# 🔄 HardverGo
 
-## Using this example
+**A community-driven marketplace for used electronic devices**
 
-Run the following command:
+*Built with transparency, security, and sustainability in mind*
 
-```sh
-npx create-turbo@latest
-```
+[![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Levine-IT/hardvergo)
+[![TypeScript](https://img.shields.io/badge/TypeScript-100%25-blue)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/license-GPL-green)](LICENSE)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D22-brightgreen)](https://nodejs.org/)
+[![PNPM](https://img.shields.io/badge/pnpm-workspace-orange)](https://pnpm.io/)
 
-## What's inside?
+[🚀 Features](#features) • [⚡ Quick Start](#quick-start) • [🏗️ Architecture](#architecture) • [🛠️ Development](#development) • [🤝 Contributing](#contributing)
 
-This Turborepo includes the following packages/apps:
+</div>
 
-### Apps and Packages
+---
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+## 📖 About
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+HardverGo is an open-source marketplace designed specifically for buying and selling used electronic devices. Our platform emphasizes **community-driven development**, **transparency**, and **security** to create a trusted environment for electronic device trading.
 
-### Utilities
+### 🎯 Mission
+- **♻️ Sustainability**: Extend the lifecycle of electronic devices through responsible reselling
+- **🤝 Community**: Foster a transparent, trustworthy trading community
+- **🔒 Security**: Ensure safe transactions with comprehensive user verification
+- **🌍 Open Source**: Build in the open with community contributions
 
-This Turborepo has some additional tools already setup for you:
+## ✨ Features
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+### 🏪 Marketplace Core
+- **📱 Device Categories**: Comprehensive categorization system for electronics
+- **🔍 Smart Search**: Advanced filtering with category-specific attributes
+- **💰 Flexible Pricing**: Support for negotiations and price agreements
+- **📍 Location-Based Trading**: Local pickup and shipping options
 
-### Build
+### 👥 Community & Trust
+- **🏆 User Ranking System**: Progressive ranking from newbie to top dealer
+- **⭐ Rating System**: Comprehensive buyer/seller rating mechanism
+- **💬 Secure Messaging**: Built-in communication for negotiations
+- **🛡️ Verification**: User activity tracking and verification systems
 
-To build all apps and packages, run the following command:
+### 🎨 Rich Media Support
+- **📸 Multi-Media Listings**: Support for images and videos
+- **🖼️ Image Variants**: Optimized images in multiple formats (WebP, JPEG, PNG, AVIF)
+- **📱 Responsive Design**: Mobile-first approach with modern UI
 
-```
-cd my-turborepo
+### 🔐 Security & Transparency
+- **📋 Order Tracking**: Complete transaction lifecycle management
+- **🔍 Audit Trails**: Comprehensive activity logging
+- **🔒 Data Protection**: Secure handling of user data and transactions
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+## 🏗️ Architecture
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
-
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
+HardverGo is built as a **Turborepo monorepo** with independently deployable applications:
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+hardvergo/
+├── apps/
+│   ├── api/          # NestJS Backend API
+│   └── frontend/     # Next.js Frontend Application
+└── packages/
+    ├── typescript-config/  # Shared TypeScript configurations
+    └── biome-config/      # Shared Biome linting/formatting
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 🛠️ Tech Stack
 
+#### Backend (`apps/api`)
+- **Framework**: NestJS with Express
+- **Database**: PostgreSQL with Drizzle ORM
+- **API Documentation**: Swagger + Scalar API Reference
+- **Authentication**: JWT-based authentication (Auth0 integration)
+- **Validation**: Class-validator for DTO validation
+
+#### Frontend (`apps/frontend`)
+- **Framework**: Next.js 15 with React 19
+- **Styling**: TailwindCSS with Radix UI components (Shadcn UI)
+- **Testing**: Vitest with Testing Library
+- **UI Development**: Storybook for component development
+- **State Management**: React hooks with custom utilities
+
+#### Shared Infrastructure
+- **Language**: TypeScript 100%
+- **Package Manager**: PNPM with workspaces
+- **Code Quality**: Biome for linting and formatting
+- **Version Management**: Changesets for semantic versioning
+- **Git Hooks**: Lefthook for pre-commit quality checks
+
+## ⚡ Quick Start
+
+### Prerequisites
+
+- **Node.js** >= 22.0.0 ([Download](https://nodejs.org/))
+- **PNPM** >= 9.15.4 (`npm install -g pnpm`)
+- **PostgreSQL** >= 14 for database
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Levine-IT/hardvergo.git
+   cd hardvergo
+   ```
+
+2. **Install dependencies**
+   ```bash
+   pnpm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   # Backend
+   cp apps/api/.env.example apps/api/.env
+   # Edit apps/api/.env with your database configuration
+   ```
+
+4. **Set up the database**
+   ```bash
+   # Generate and run migrations
+   cd apps/api
+   pnpm db:generate
+   pnpm db:migrate
+   ```
+
+5. **Start development servers**
+   ```bash
+   # From project root - starts both frontend and backend
+   pnpm dev
+   
+   # Or start individually:
+   pnpm dev --filter=api      # Backend only
+   pnpm dev --filter=frontend # Frontend only
+   ```
+
+### 🌐 Access Points
+
+- **Frontend**: http://localhost:3000
+- **API**: http://localhost:3001
+- **API Documentation**: http://localhost:3001/api
+- **Storybook**: http://localhost:6006 (run `pnpm storybook`)
+
+## 🛠️ Development
+
+### Available Commands
+
+```bash
+# Development
+pnpm dev                    # Start all apps in development mode
+pnpm dev --filter=api       # Start backend only
+pnpm dev --filter=frontend  # Start frontend only
+
+# Building
+pnpm build                  # Build all apps for production
+pnpm build --filter=api     # Build backend only
+
+# Code Quality
+pnpm lint                   # Lint all packages
+pnpm lint:fix              # Fix linting issues
+pnpm format                # Format code with Biome
+pnpm type-check            # TypeScript type checking
+
+# Testing
+pnpm test                  # Run all tests
+pnpm test --filter=frontend # Run frontend tests only
+
+# Database Operations
+cd apps/api
+pnpm db:generate           # Generate database migrations
+pnpm db:migrate            # Run database migrations  
+pnpm db:push               # Push schema changes to database
+
+# Versioning
+pnpm changeset             # Create a changeset for version management
+pnpm changeset:version     # Update versions based on changesets
 ```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+### Database Schema
 
-### Remote Caching
+The application uses a comprehensive PostgreSQL schema supporting:
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+- **Users** with progressive ranking system
+- **Categories** with hierarchical structure and dynamic attributes
+- **Listings** with rich media support and flexible attributes
+- **Orders** with complete transaction lifecycle
+- **Ratings** and **Activity Tracking** for community trust
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Code Standards
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+- **TypeScript**: Strict mode enabled across all packages
+- **Biome**: Unified linting and formatting (replaces ESLint + Prettier)
+- **Testing**: Comprehensive test coverage with Vitest
+- **Git Hooks**: Automatic formatting and linting on commit
+- **Semantic Versioning**: Changesets for version management
 
-```
-cd my-turborepo
+## 📚 API Documentation
 
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+Comprehensive API documentation is available at:
+- **Interactive Docs**: http://localhost:3001/api (when running locally)
+- **Swagger/OpenAPI**: Auto-generated from NestJS decorators
+- **Scalar UI**: Modern, interactive API reference
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
+### Key API Endpoints
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+- `POST /api/users` - User registration
+- `GET /api/categories` - Browse device categories
+- `POST /api/listings` - Create new listings
+- `GET /api/listings` - Search and filter listings
+- `POST /api/orders` - Place orders
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+## 🚀 Deployment
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
+Both applications are designed for independent deployment:
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
+### Backend Deployment
+- **Environment**: Node.js runtime with PostgreSQL database
+- **Build**: `pnpm build --filter=api`
+- **Start**: `pnpm start --filter=api`
 
-## Useful Links
+### Frontend Deployment
+- **Platform**: Vercel, Netlify, or any Node.js hosting
+- **Build**: `pnpm build --filter=frontend`
+- **Static Export**: Supports static site generation
 
-Learn more about the power of Turborepo:
+### Environment Variables
 
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+Refer to `.env.example` files in each app directory for required environment variables.
+
+## 🤝 Contributing
+
+We welcome contributions from the community! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on:
+
+- **Development Workflow**: Feature branches, pull requests, and code review
+- **Code Standards**: TypeScript, Biome configuration, and testing requirements
+- **Versioning**: Semantic versioning with changesets
+- **Community Guidelines**: Code of conduct and communication standards
+
+### Quick Contribution Steps
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Make your changes with tests
+4. Run quality checks: `pnpm lint && pnpm test`
+5. Create a changeset: `pnpm changeset`
+6. Commit and push your changes
+7. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE) file for details.
+
+## 🌟 Community & Support
+
+- **🐛 Issues**: [GitHub Issues](https://github.com/Levine-IT/hardvergo/issues)
+- **💡 Feature Requests**: [GitHub Discussions](https://github.com/Levine-IT/hardvergo/discussions)
+- **📧 Contact**: [Your Contact Information]
+
+---
+
+<div align="center">
+
+**Built with ❤️ by the HardverGo community**
+
+*Promoting sustainable technology through community-driven marketplace solutions*
+
+</div>
