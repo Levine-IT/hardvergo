@@ -28,34 +28,34 @@
 HardverGo is an open-source marketplace designed specifically for buying and selling used electronic devices. Our platform emphasizes **community-driven development**, **transparency**, and **security** to create a trusted environment for electronic device trading.
 
 ### 🎯 Mission
-- **♻️ Sustainability**: Extend the lifecycle of electronic devices through responsible reselling
-- **🤝 Community**: Foster a transparent, trustworthy trading community
-- **🔒 Security**: Ensure safe transactions with comprehensive user verification
-- **🌍 Open Source**: Build in the open with community contributions
+- **Sustainability**: Extend the lifecycle of electronic devices through responsible reselling
+- **Community**: Foster a transparent, trustworthy trading community
+- **Security**: Ensure safe transactions with comprehensive user verification
+- **Open Source**: Build in the open with community contributions
 
 ## Features
 
 ### 🏪 Marketplace Core
-- **📱 Device Categories**: Comprehensive categorization system for electronics
-- **🔍 Smart Search**: Advanced filtering with category-specific attributes
-- **💰 Flexible Pricing**: Support for negotiations and price agreements
-- **📍 Location-Based Trading**: Local pickup and shipping options
+- **Device Categories**: Comprehensive categorization system for electronics
+- **Smart Search**: Advanced filtering with category-specific attributes
+- **Flexible Pricing**: Support for negotiations and price agreements
+- **Location-Based Trading**: Local pickup and shipping options
 
 ### 👥 Community & Trust
-- **🏆 User Ranking System**: Progressive ranking from newbie to top dealer
-- **⭐ Rating System**: Comprehensive buyer/seller rating mechanism
-- **💬 Secure Messaging**: Built-in communication for negotiations
-- **🛡️ Verification**: User activity tracking and verification systems
+- **User Ranking System**: Progressive ranking from newbie to top dealer
+- **Rating System**: Comprehensive buyer/seller rating mechanism
+- **Secure Messaging**: Built-in communication for negotiations
+- **Verification**: User activity tracking and verification systems
 
 ### 🎨 Rich Media Support
-- **📸 Media Listings**: Support for user uploaded images
-- **🖼️ Image Variants**: Optimized images in multiple formats (WebP, JPEG, PNG, AVIF)
-- **📱 Responsive Design**: Mobile-first approach with modern UI
+- **Media Listings**: Support for user uploaded images
+- **Image Variants**: Optimized images in multiple formats (WebP, JPEG, PNG, AVIF)
+- **Responsive Design**: Mobile-first approach with modern UI
 
 ### 🔐 Security & Transparency
-- **📋 Order Tracking**: Complete transaction lifecycle management
-- **🔍 Audit Trails**: Comprehensive activity logging
-- **🔒 Data Protection**: Secure handling of user data and transactions
+- **Order Tracking**: Complete transaction lifecycle management
+- **Audit Trails**: Comprehensive activity logging
+- **Data Protection**: Secure handling of user data and transactions
 
 ## Architecture
 
@@ -258,9 +258,9 @@ This project is licensed under the GPL v3 License - see the [LICENSE](LICENSE) f
 
 ## 🌟 Community & Support
 
-- **🐛 Issues**: [GitHub Issues](https://github.com/Levine-IT/hardvergo/issues)
-- **💡 Feature Requests**: [GitHub Discussions](https://github.com/Levine-IT/hardvergo/discussions)
-- **📧 Contact**: [Your Contact Information]
+- **Issues**: [GitHub Issues](https://github.com/Levine-IT/hardvergo/issues)
+- **Feature Requests**: [GitHub Discussions](https://github.com/Levine-IT/hardvergo/discussions)
+- **Contact**: info@hardvergo.hu
 
 ---
 
