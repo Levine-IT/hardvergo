@@ -18,6 +18,11 @@
 
 ---
 
+| ⚠️ WARNING           |
+|:----------------------------|
+| This repo is in active development, working on fundamental features yet, breaking changes are going to occur! |
+
+
 ## 📖 About
 
 HardverGo is an open-source marketplace designed specifically for buying and selling used electronic devices. Our platform emphasizes **community-driven development**, **transparency**, and **security** to create a trusted environment for electronic device trading.
@@ -28,7 +33,7 @@ HardverGo is an open-source marketplace designed specifically for buying and sel
 - **🔒 Security**: Ensure safe transactions with comprehensive user verification
 - **🌍 Open Source**: Build in the open with community contributions
 
-## ✨ Features
+## Features
 
 ### 🏪 Marketplace Core
 - **📱 Device Categories**: Comprehensive categorization system for electronics
@@ -43,7 +48,7 @@ HardverGo is an open-source marketplace designed specifically for buying and sel
 - **🛡️ Verification**: User activity tracking and verification systems
 
 ### 🎨 Rich Media Support
-- **📸 Multi-Media Listings**: Support for images and videos
+- **📸 Media Listings**: Support for user uploaded images
 - **🖼️ Image Variants**: Optimized images in multiple formats (WebP, JPEG, PNG, AVIF)
 - **📱 Responsive Design**: Mobile-first approach with modern UI
 
@@ -52,7 +57,7 @@ HardverGo is an open-source marketplace designed specifically for buying and sel
 - **🔍 Audit Trails**: Comprehensive activity logging
 - **🔒 Data Protection**: Secure handling of user data and transactions
 
-## 🏗️ Architecture
+## Architecture
 
 HardverGo is built as a **Turborepo monorepo** with independently deployable applications:
 
@@ -66,7 +71,7 @@ hardvergo/
     └── biome-config/      # Shared Biome linting/formatting
 ```
 
-### 🛠️ Tech Stack
+### Tech Stack
 
 #### Backend (`apps/api`)
 - **Framework**: NestJS with Express
@@ -89,7 +94,7 @@ hardvergo/
 - **Version Management**: Changesets for semantic versioning
 - **Git Hooks**: Lefthook for pre-commit quality checks
 
-## ⚡ Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -139,10 +144,10 @@ hardvergo/
 
 - **Frontend**: http://localhost:3000
 - **API**: http://localhost:3001
-- **API Documentation**: http://localhost:3001/api
+- **API Documentation**: http://localhost:3001/reference
 - **Storybook**: http://localhost:6006 (run `pnpm storybook`)
 
-## 🛠️ Development
+## Development
 
 ### Available Commands
 
@@ -228,7 +233,7 @@ Both applications are designed for independent deployment:
 
 Refer to `.env.example` files in each app directory for required environment variables.
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions from the community! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on:
 
