@@ -1,7 +1,7 @@
 import { ListingId } from "src/listings/model/listing-id";
 import { UserId } from "src/users/model/user-id";
 
-interface S3Image {
+export interface S3Image {
 	readonly bucketName: string;
 	getPath(): string;
 	getKey(): string;
