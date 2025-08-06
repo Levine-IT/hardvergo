@@ -3,21 +3,18 @@ import {
 	Controller,
 	Delete,
 	Get,
+	HttpCode,
 	HttpStatus,
 	Param,
 	Post,
 } from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiOperation,
-	ApiResponse,
-} from "@nestjs/swagger";
+import { ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { ListingDto } from "src/listings/dto/listing.dto";
 import {
 	CreateDraftImageUploadDto,
 	DraftImageDeleteResponseDto,
 	DraftImageUploadDto,
+	S3PresignedPostDto,
 } from "./dto/darft-image-upload.dto";
 import { DraftListingDto } from "./dto/draft-listing.dto";
 import { ListingImageService } from "./listing-image.service";
@@ -55,9 +52,7 @@ export class UserListingsController {
 		description:
 			"This endpoint generates a presigned URL that allows direct upload to S3 without going through the server. The client should use this URL to upload the image directly to S3.",
 	})
-	@ApiBody({
-		type: CreateDraftImageUploadDto,
-	})
+	@HttpCode(200) // Use 200 instead of 201 in swagger
 	@ApiOkResponse({
 		description: "Presigned URL generated successfully",
 		type: DraftImageUploadDto,
@@ -69,14 +64,12 @@ export class UserListingsController {
 	async generatePresignedUploadUrl(
 		@Body() body: CreateDraftImageUploadDto,
 	): Promise<DraftImageUploadDto> {
-		const { url, key } = await this.s3Service.generatePresignedUploadUrl(
-			body.contentType,
-		);
+		const { expires, presignedPost } =
+			await this.s3Service.generatePresignedUploadUrl(body.contentType);
 
 		return {
-			uploadUrl: url,
-			tempKey: key,
-			expiresIn: 300,
+			expiresIn: expires,
+			presignedPost: presignedPost as S3PresignedPostDto,
 		};
 	}
 

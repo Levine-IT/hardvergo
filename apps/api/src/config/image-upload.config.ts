@@ -17,7 +17,7 @@ export default registerAs(
 			"image/heic",
 			"image/heif",
 		],
-		maxFileSizeBytes: 10 * 1024 * 1024, // 10MB
+		maxFileSizeBytes: 5 * 1024 * 1024, // 5MB
 		presignedUrlExpirationSeconds: 300, // 5 minutes
 	}),
 );

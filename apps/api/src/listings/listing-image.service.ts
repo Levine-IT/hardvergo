@@ -1,10 +1,9 @@
 import {
 	CopyObjectCommand,
 	DeleteObjectCommand,
-	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createPresignedPost } from "@aws-sdk/s3-presigned-post";
 import { Inject, Injectable } from "@nestjs/common";
 import type { ConfigType } from "@nestjs/config";
 import { v4 as uuidv4 } from "uuid";
@@ -22,6 +21,7 @@ export class ListingImageService {
 		private readonly s3Config: ConfigType<typeof s3ConfigImport>,
 	) {
 		this.s3Client = new S3Client({
+			endpoint: this.s3Config.endpoint,
 			region: this.s3Config.region,
 			credentials: this.s3Config.credentials,
 		});
@@ -29,7 +29,7 @@ export class ListingImageService {
 
 	async generatePresignedUploadUrl(
 		contentType: string,
-	): Promise<{ url: string; key: string }> {
+	): Promise<{ expires: number; presignedPost: object }> {
 		// Validate content type using configuration
 		if (
 			!this.imageConfig.allowedMimeTypes.includes(contentType.toLowerCase())
@@ -50,22 +50,24 @@ export class ListingImageService {
 		};
 
 		const fileExtension = extensionMap[contentType.toLowerCase()];
-		const tempKey = `${this.s3Config.tempPrefix}${uuidv4()}.${fileExtension}`;
+		const tempKey = `${this.s3Config.draftPrefix}${uuidv4()}.${fileExtension}`;
 
-		const command = new PutObjectCommand({
+		const presignedPost = await createPresignedPost(this.s3Client, {
 			Bucket: this.s3Config.bucketName,
 			Key: tempKey,
-			ContentType: contentType,
-			ContentLength: this.imageConfig.maxFileSizeBytes,
-			Metadata: {
-				signedUrlCreatedAt: new Date().toISOString(),
-			},
+			Conditions: [
+				// CRITICAL: This enforces the 5MB limit at S3 level - upload will fail if exceeded
+				["content-length-range", 1, this.imageConfig.maxFileSizeBytes],
+				// ["starts-with", "$Content-Type", contentType.split("/")[0]], // Enforce file type
+				["eq", "$key", tempKey], // Ensure exact key match
+			],
+			Expires: this.imageConfig.presignedUrlExpirationSeconds,
 		});
 
-		const url = await getSignedUrl(this.s3Client, command, {
-			expiresIn: this.imageConfig.presignedUrlExpirationSeconds,
-		});
-		return { url, key: tempKey };
+		return {
+			expires: this.imageConfig.presignedUrlExpirationSeconds,
+			presignedPost,
+		};
 	}
 
 	async deleteTempImage(tempKey: string): Promise<void> {
@@ -100,6 +102,7 @@ export class ListingImageService {
 	}
 
 	getImageUrl(key: string): string {
-		return `https://${this.s3Config.bucketName}.s3.${this.s3Config.region}.amazonaws.com/${key}`;
+		// return `https://${this.s3Config.bucketName}.s3.${this.s3Config.region}.amazonaws.com/${key}`;
+		return `${this.s3Config.endpoint}/${this.s3Config.bucketName}/${key}`;
 	}
 }

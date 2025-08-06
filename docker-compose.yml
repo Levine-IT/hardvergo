@@ -17,9 +17,13 @@ services:
       - "9000:9000" # MinIO API port
       - "9001:9001" # MinIO Console port
     environment:
-      MINIO_ROOT_USER: minioadmin
-      MINIO_ROOT_PASSWORD: minioadmin
-      MINIO_DOMAIN: localhost
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DOMAIN=localhost
+      - MINIO_SERVER_URL=http://localhost:9000
+      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      - MINIO_LOG_LEVEL=DEBUG
+      - MINIO_API_REQUESTS_MAX=1000
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
