@@ -142,10 +142,10 @@ hardvergo/
 
 ### 🌐 Access Points
 
-- **Frontend**: http://localhost:3000
-- **API**: http://localhost:3001
-- **API Documentation**: http://localhost:3001/reference
-- **Storybook**: http://localhost:6006 (run `pnpm storybook`)
+- **Frontend**: <http://localhost:3000>
+- **API**: <http://localhost:3001>
+- **API Documentation**: <http://localhost:3001/reference>
+- **Storybook**: <http://localhost:6006> (run `pnpm storybook`)
 
 ## Development
 
@@ -203,7 +203,7 @@ The application uses a comprehensive PostgreSQL schema supporting:
 ## 📚 API Documentation
 
 Comprehensive API documentation is available at:
-- **Interactive Docs**: http://localhost:3001/api (when running locally)
+- **Interactive Docs**: <http://localhost:3001/reference> (when running locally)
 - **Swagger/OpenAPI**: Auto-generated from NestJS decorators
 - **Scalar UI**: Modern, interactive API reference
 
