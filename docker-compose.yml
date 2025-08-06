@@ -1,7 +1,15 @@
-version: '3.8'
-
 services:
-  # MinIO S3 Emulator
+  postgres:
+    image: postgres:17-alpine
+    container_name: hardvergo_postgres
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "54323:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
   minio:
     image: minio/minio:latest
     container_name: minio-s3
@@ -24,10 +32,10 @@ services:
     networks:
       - app-network
 
-volumes:
-  minio_data:
-    driver: local
-
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  postgres_data:
+  minio_data:

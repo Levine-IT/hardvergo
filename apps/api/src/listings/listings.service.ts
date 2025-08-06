@@ -1,9 +1,13 @@
-import { Injectable } from "@nestjs/common";
+import { Inject, Injectable } from "@nestjs/common";
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
+import type * as schema from "../../db/schema";
 import { CreateListingDto } from "./dto/create-listing.dto";
 import { UpdateItemDto } from "./dto/update-listing.dto";
 
 @Injectable()
 export class ListingsService {
+	constructor(@Inject("DB") private drizzle: NodePgDatabase<typeof schema>) {}
+
 	create(_: CreateListingDto) {
 		return "This action adds a new item";
 	}
