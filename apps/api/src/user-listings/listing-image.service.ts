@@ -9,10 +9,13 @@ import type { ConfigType } from "@nestjs/config";
 import { v4 as uuidv4 } from "uuid";
 import imageUploadConfig from "../config/image-upload.config";
 import s3ConfigImport from "../config/s3.config";
+import { DraftImage, PersistantImage, S3Image } from "./model/draft-image.model";
+import { UserId } from "src/users/model/user-id";
+import { ListingId } from "src/listings/model/listing-id";
 
 @Injectable()
 export class ListingImageService {
-	private s3Client: S3Client;
+	private readonly s3Client: S3Client;
 
 	constructor(
 		@Inject(imageUploadConfig.KEY)
@@ -28,38 +31,16 @@ export class ListingImageService {
 	}
 
 	async generatePresignedUploadUrl(
-		contentType: string,
+		draftImage: DraftImage
 	): Promise<{ expires: number; presignedPost: object }> {
-		// Validate content type using configuration
-		if (
-			!this.imageConfig.allowedMimeTypes.includes(contentType.toLowerCase())
-		) {
-			throw new Error(
-				`Invalid content type. Only the following image types are allowed: ${this.imageConfig.allowedMimeTypes.join(", ")} got: ${contentType.toLowerCase()}`,
-			);
-		}
-
-		// Determine file extension from content type
-		const extensionMap: Record<string, string> = {
-			"image/jpeg": "jpg",
-			"image/jpg": "jpg",
-			"image/png": "png",
-			"image/webp": "webp",
-			"image/heic": "heic",
-			"image/heif": "heif",
-		};
-
-		const fileExtension = extensionMap[contentType.toLowerCase()];
-		const tempKey = `${this.s3Config.draftPrefix}${uuidv4()}.${fileExtension}`;
-
 		const presignedPost = await createPresignedPost(this.s3Client, {
-			Bucket: this.s3Config.bucketName,
-			Key: tempKey,
+			Bucket: this.imageConfig.draftBucketName,
+			Key: draftImage.getKey(),
 			Conditions: [
 				// CRITICAL: This enforces the 5MB limit at S3 level - upload will fail if exceeded
 				["content-length-range", 1, this.imageConfig.maxFileSizeBytes],
 				// ["starts-with", "$Content-Type", contentType.split("/")[0]], // Enforce file type
-				["eq", "$key", tempKey], // Ensure exact key match
+				["eq", "$key", draftImage.getKey()], // Ensure exact key match
 			],
 			Expires: this.imageConfig.presignedUrlExpirationSeconds,
 		});
@@ -70,39 +51,36 @@ export class ListingImageService {
 		};
 	}
 
-	async deleteTempImage(tempKey: string): Promise<void> {
+	async deleteDraftImage(draftImage: DraftImage): Promise<void> {
 		const command = new DeleteObjectCommand({
-			Bucket: this.s3Config.bucketName,
-			Key: tempKey,
+			Bucket: this.imageConfig.draftBucketName,
+			Key: draftImage.getKey(),
 		});
 
 		await this.s3Client.send(command);
 	}
 
 	async moveTempToPersistent(
-		tempKey: string,
-		listingId: string,
-	): Promise<string> {
-		const fileExtension = tempKey.split(".").pop();
-		const persistentKey = `${this.s3Config.persistentPrefix}${listingId}/${uuidv4()}.${fileExtension}`;
+		draftImage: DraftImage,
+		listingId: ListingId
+	): Promise<PersistantImage> {
+		const persistentImage = draftImage.toPersistantImage(this.imageConfig.persistentBucketName, listingId);
 
-		// Copy from temp to persistent location
+		// Copy from draft to persistent location
 		const copyCommand = new CopyObjectCommand({
-			Bucket: this.s3Config.bucketName,
-			Key: persistentKey,
-			CopySource: `${this.s3Config.bucketName}/${tempKey}`,
+			Bucket: persistentImage.bucketName,
+			Key: persistentImage.getKey(),
+			CopySource: draftImage.getPath()
 		});
 
 		await this.s3Client.send(copyCommand);
 
-		// Delete temp image
-		await this.deleteTempImage(tempKey);
+		await this.deleteDraftImage(draftImage);
 
-		return persistentKey;
+		return persistentImage;
 	}
 
-	getImageUrl(key: string): string {
-		// return `https://${this.s3Config.bucketName}.s3.${this.s3Config.region}.amazonaws.com/${key}`;
-		return `${this.s3Config.endpoint}/${this.s3Config.bucketName}/${key}`;
+	getImageUrl(image: S3Image): string {
+		return `${this.s3Config.endpoint}/${image.getPath()}`;
 	}
 }

@@ -21,7 +21,7 @@ import { ListingImageService } from "./listing-image.service";
 
 @Controller("users/:userId/listings")
 export class UserListingsController {
-	constructor(private readonly s3Service: ListingImageService) {}
+	constructor(private readonly s3Service: ListingImageService) { }
 
 	@Get()
 	@ApiOperation({ summary: "Get all listings for user" })
@@ -84,7 +84,7 @@ export class UserListingsController {
 	): Promise<DraftImageDeleteResponseDto> {
 		// Decode the temp key since it comes from URL params
 		const decodedTempKey = decodeURIComponent(tempKey);
-		await this.s3Service.deleteTempImage(decodedTempKey);
+		await this.s3Service.deleteDraftImage(decodedTempKey);
 
 		return {
 			deleted: true,
