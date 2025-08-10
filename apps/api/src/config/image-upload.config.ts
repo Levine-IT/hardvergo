@@ -22,6 +22,6 @@ export default registerAs(
 		maxFileSizeBytes: 5 * 1024 * 1024, // 5MB
 		presignedUrlExpirationSeconds: 300, // 5 minutes
 		draftBucketName: "listings-gallery-draft",
-		persistentBucketName: "listings-gallery"
+		persistentBucketName: "listings-gallery",
 	}),
 );

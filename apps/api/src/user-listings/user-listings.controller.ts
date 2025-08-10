@@ -8,7 +8,12 @@ import {
 	Param,
 	Post,
 } from "@nestjs/common";
-import { ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+	ApiNotFoundResponse,
+	ApiOkResponse,
+	ApiOperation,
+	ApiResponse,
+} from "@nestjs/swagger";
 import { ListingDto } from "src/listings/dto/listing.dto";
 import { UserId } from "src/users/model/user-id";
 import {
@@ -38,6 +43,9 @@ export class UserListingsController {
 		summary: "Fetches the draft listing",
 		description:
 			"This endpoint retrieves the draft listing for the user. The draft listing is a serialized stateform that includes attributes like title, description, price, etc.",
+	})
+	@ApiNotFoundResponse({
+		description: "Draft listing not found",
 	})
 	@ApiOkResponse({
 		type: DraftListingDto,

@@ -35,10 +35,17 @@ export class DraftImage implements S3Image {
 		return `${this.userId.toString()}/${this.fileName}`;
 	}
 
-	toPersistantImage(persistentBucketName: string, listingId: ListingId): PersistantImage {
-		return new PersistantImage(persistentBucketName, this.userId, listingId, this.fileName)
+	toPersistantImage(
+		persistentBucketName: string,
+		listingId: ListingId,
+	): PersistantImage {
+		return new PersistantImage(
+			persistentBucketName,
+			this.userId,
+			listingId,
+			this.fileName,
+		);
 	}
-
 }
 
 export class PersistantImage implements S3Image {
@@ -50,7 +57,12 @@ export class PersistantImage implements S3Image {
 	 */
 	readonly fileName: string;
 
-	constructor(bucketName: string, userId: UserId, listingId: ListingId, fileName: string) {
+	constructor(
+		bucketName: string,
+		userId: UserId,
+		listingId: ListingId,
+		fileName: string,
+	) {
 		this.bucketName = bucketName;
 		this.listingId = listingId;
 		this.userId = userId;
