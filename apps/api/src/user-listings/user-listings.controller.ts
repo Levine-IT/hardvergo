@@ -10,18 +10,18 @@ import {
 } from "@nestjs/common";
 import { ApiOkResponse, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { ListingDto } from "src/listings/dto/listing.dto";
+import { UserId } from "src/users/model/user-id";
 import {
 	CreateDraftImageUploadDto,
 	DraftImageDeleteResponseDto,
 	DraftImageUploadDto,
-	S3PresignedPostDto,
 } from "./dto/darft-image-upload.dto";
 import { DraftListingDto } from "./dto/draft-listing.dto";
 import { ListingImageService } from "./listing-image.service";
 
 @Controller("users/:userId/listings")
 export class UserListingsController {
-	constructor(private readonly s3Service: ListingImageService) { }
+	constructor(private readonly s3Service: ListingImageService) {}
 
 	@Get()
 	@ApiOperation({ summary: "Get all listings for user" })
@@ -64,13 +64,12 @@ export class UserListingsController {
 	async generatePresignedUploadUrl(
 		@Body() body: CreateDraftImageUploadDto,
 	): Promise<DraftImageUploadDto> {
-		const { expires, presignedPost } =
-			await this.s3Service.generatePresignedUploadUrl(body.contentType);
+		const dto = await this.s3Service.createPresignedPost(
+			new UserId("example-user-id"), // TODO: Replace with actual user ID from request context
+			body.contentType,
+		);
 
-		return {
-			expiresIn: expires,
-			presignedPost: presignedPost as S3PresignedPostDto,
-		};
+		return dto;
 	}
 
 	@Delete("draft/images/:tempKey")
@@ -84,11 +83,11 @@ export class UserListingsController {
 	): Promise<DraftImageDeleteResponseDto> {
 		// Decode the temp key since it comes from URL params
 		const decodedTempKey = decodeURIComponent(tempKey);
-		await this.s3Service.deleteDraftImage(decodedTempKey);
+		// await this.s3Service.deleteDraftImage(decodedTempKey);
 
 		return {
 			deleted: true,
-			tempKey: decodedTempKey,
+			tempKey: `placeholder : ${decodedTempKey}`, // Replace with actual temp key
 		};
 	}
 }
