@@ -5,6 +5,7 @@ import * as schema from "../db/schema";
 import { AttributesModule } from "./attributes/attributes.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { ListingsModule } from "./listings/listings.module";
+import { UserListingsModule } from "./user-listings/user-listings.module";
 import { UsersModule } from "./users/users.module";
 
 @Module({
@@ -24,6 +25,7 @@ import { UsersModule } from "./users/users.module";
 		ListingsModule,
 		UsersModule,
 		AttributesModule,
+		UserListingsModule,
 	],
 	controllers: [],
 	providers: [],
