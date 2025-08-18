@@ -81,6 +81,22 @@ services:
     networks:
       - app-network
 
+  s3manager:
+    image: cloudlena/s3manager
+    container_name: s3manager
+    ports:
+      - "8080:8080"
+    environment:
+      - ENDPOINT=localstack:4566
+      - ACCESS_KEY_ID=test
+      - SECRET_ACCESS_KEY=test
+      - USE_SSL=false
+      - ALLOW_DELETE=true
+    depends_on:
+      - localstack
+    networks:
+      - app-network
+
   minio:
     image: minio/minio:latest
     container_name: minio-s3
