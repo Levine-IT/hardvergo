@@ -12,24 +12,6 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - app-network
-  optimize-draft-listing-image:
-    build:
-      context: ./apps/optimize-draft-listing-image
-      dockerfile: Dockerfile.dev
-    container_name: optimize-draft-listing-image
-    environment:
-      - AWS_DEFAULT_REGION=us-east-1
-      - AWS_ACCESS_KEY_ID=minioadmin
-      - AWS_SECRET_ACCESS_KEY=minioadmin
-      - AWS_ENDPOINT_URL=http://minio:9000
-      - SQS_QUEUE_URL=http://sqs.eu-central-1.localhost.localstack.cloud:4566/000000000000/optimize-draft-images
-    ports:
-      - "9002:8080"
-    depends_on:
-      - minio
-      - localstack-init
-    networks:
-      - app-network
   localstack:
     image: localstack/localstack:latest
     container_name: localstack

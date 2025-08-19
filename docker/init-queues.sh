@@ -14,6 +14,9 @@ NC='\033[0m' # No Color
 # Configuration
 ENDPOINT_URL="${LOCALSTACK_ENDPOINT:-http://localhost:4566}"
 PROFILE_NAME="localstack"
+BUCKET_NAME="draft-listing-images"
+SHARP_LAYER_URL="https://github.com/pH200/sharp-layer/releases/download/0.34.3/release-x64.zip"
+SHARP_LAYER_NAME="sharp-layer"
 
 # Default queues to create (can be overridden by command line arguments)
 DEFAULT_QUEUES=("optimize-draft-images")
@@ -99,6 +102,22 @@ fi
 
 print_info "LocalStack is running and healthy"
 
+# Create S3 bucket
+echo ""
+echo "🪣 Creating S3 bucket..."
+print_info "Creating S3 bucket: ${BUCKET_NAME}"
+
+# Create the S3 bucket
+aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 mb s3://${BUCKET_NAME} 2>/dev/null || \
+    print_warning "Bucket '${BUCKET_NAME}' might already exist"
+
+# Check if bucket was created successfully
+if aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 ls s3://${BUCKET_NAME} &>/dev/null; then
+    print_status "S3 bucket '${BUCKET_NAME}' is ready"
+else
+    print_error "Failed to create or access S3 bucket '${BUCKET_NAME}'"
+fi
+
 # Create the SQS queues
 echo ""
 echo "📬 Creating SQS queues..."
@@ -136,6 +155,56 @@ for QUEUE_NAME in "${QUEUES[@]}"; do
     fi
 done
 
+# Create Lambda layer for Sharp
+echo ""
+echo "📚 Creating Lambda layer for Sharp..."
+
+create_sharp_layer() {
+    print_info "Downloading Sharp layer..." >&2
+    
+    # Download the Sharp layer if it doesn't exist
+    if [ ! -f "sharp-layer.zip" ]; then
+        if command -v curl &> /dev/null; then
+            curl -L -o sharp-layer.zip "${SHARP_LAYER_URL}" >&2
+        elif command -v wget &> /dev/null; then
+            wget -O sharp-layer.zip "${SHARP_LAYER_URL}" >&2
+        else
+            print_error "Neither curl nor wget is available to download Sharp layer" >&2
+            return 1
+        fi
+    fi
+    
+    if [ ! -f "sharp-layer.zip" ]; then
+        print_error "Failed to download Sharp layer" >&2
+        return 1
+    fi
+    
+    print_info "Creating Sharp Lambda layer..." >&2
+    
+    # Create or update the Lambda layer
+    LAYER_VERSION=$(aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda publish-layer-version \
+        --layer-name ${SHARP_LAYER_NAME} \
+        --zip-file fileb://sharp-layer.zip \
+        --compatible-runtimes nodejs22.x \
+        --compatible-architectures x86_64 \
+        --query 'Version' --output text 2>/dev/null || echo "")
+    
+    if [ -n "$LAYER_VERSION" ]; then
+        print_status "Sharp layer created with version: ${LAYER_VERSION}" >&2
+        echo "$LAYER_VERSION"
+    else
+        print_error "Failed to create Sharp layer" >&2
+        return 1
+    fi
+}
+
+# Create the Sharp layer
+SHARP_LAYER_VERSION=$(create_sharp_layer)
+if [ $? -ne 0 ]; then
+    print_error "Failed to create Sharp layer, continuing without it"
+    SHARP_LAYER_VERSION=""
+fi
+
 # Deploy Lambda function from dist folder
 echo ""
 echo "📦 Deploying Lambda function from dist folder..."
@@ -151,21 +220,51 @@ deploy_lambda() {
         zip -r ../function.zip *
         cd "$LAMBDA_DIR"
         
+        # Build layers configuration
+        LAYERS_CONFIG=""
+        if [ -n "$SHARP_LAYER_VERSION" ]; then
+            LAYER_ARN="arn:aws:lambda:eu-central-1:000000000000:layer:${SHARP_LAYER_NAME}:${SHARP_LAYER_VERSION}"
+            LAYERS_CONFIG="--layers ${LAYER_ARN}"
+        fi
+        
         # Deploy or update Lambda function
         print_info "Deploying Lambda function..."
-        aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda create-function \
-            --function-name ${LAMBDA_NAME} \
-            --runtime nodejs22.x \
-            --role arn:aws:iam::000000000000:role/lambda-role \
-            --handler index.handler \
-            --zip-file fileb://function.zip \
-            --timeout 300 \
-            --memory-size 512 2>/dev/null || \
-        aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda update-function-code \
-            --function-name ${LAMBDA_NAME} \
-            --zip-file fileb://function.zip
+        
+        # Check if function exists
+        if aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda get-function \
+            --function-name ${LAMBDA_NAME} &>/dev/null; then
+            
+            print_info "Function exists, updating..."
+            # Update function code
+            aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda update-function-code \
+                --function-name ${LAMBDA_NAME} \
+                --zip-file fileb://function.zip
+            
+            # Update layers if Sharp layer is available
+            if [ -n "$SHARP_LAYER_VERSION" ]; then
+                LAYER_ARN="arn:aws:lambda:eu-central-1:000000000000:layer:${SHARP_LAYER_NAME}:${SHARP_LAYER_VERSION}"
+                aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda update-function-configuration \
+                    --function-name ${LAMBDA_NAME} \
+                    --layers ${LAYER_ARN} 2>/dev/null || print_warning "Failed to update Lambda layers"
+            fi
+        else
+            print_info "Creating new function... with ${LAYERS_CONFIG}"
+            # Create new function
+            aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda create-function \
+                --function-name ${LAMBDA_NAME} \
+                --runtime nodejs22.x \
+                --role arn:aws:iam::000000000000:role/lambda-role \
+                --handler index.handler \
+                --zip-file fileb://function.zip \
+                --timeout 300 \
+                --memory-size 512 \
+                $LAYERS_CONFIG
+        fi
         
         print_status "Lambda function deployed successfully"
+        if [ -n "$SHARP_LAYER_VERSION" ]; then
+            print_status "Sharp layer attached to Lambda function"
+        fi
         
         # Clean up
         rm -f function.zip
@@ -195,24 +294,30 @@ if [ -d "$LAMBDA_DIR" ]; then
         print_status "Lambda function connected to SQS queue"
     fi
     
-    # Watch for changes in dist folder
-    print_info "Watching ${DIST_DIR} for changes..."
+    # Create S3 event notification to send to SQS queue
+    print_info "Creating S3 event notification to forward to SQS queue..."
     
-    # Get initial modification time of dist folder
-    LAST_MODIFIED=$(stat -c %Y "$DIST_DIR" 2>/dev/null || echo 0)
+    # Get the SQS queue ARN
+    QUEUE_ARN="arn:aws:sqs:eu-central-1:000000000000:optimize-draft-images"
     
-    while true; do
-        sleep 5
-        if [ -d "$DIST_DIR" ]; then
-            CURRENT_MODIFIED=$(stat -c %Y "$DIST_DIR")
-            if [ "$CURRENT_MODIFIED" -gt "$LAST_MODIFIED" ]; then
-                print_info "Detected changes in dist folder, redeploying..."
-                if deploy_lambda; then
-                    LAST_MODIFIED=$CURRENT_MODIFIED
-                fi
-            fi
-        fi
-    done
+    # Create a notification configuration JSON to send S3 events to SQS
+    NOTIFICATION_CONFIG='{
+        "QueueConfigurations": [
+            {
+                "Id": "S3ObjectCreatedEvent",
+                "QueueArn": "'${QUEUE_ARN}'",
+                "Events": ["s3:ObjectCreated:*"]
+            }
+        ]
+    }'
+    
+    # Apply the notification configuration to the S3 bucket
+    aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3api put-bucket-notification-configuration \
+        --bucket ${BUCKET_NAME} \
+        --notification-configuration "$NOTIFICATION_CONFIG" 2>/dev/null || \
+        print_warning "Failed to create S3 event notification (bucket might not exist or queue not ready)"
+    
+    print_status "S3 bucket configured to send events to SQS queue"
 else
     print_error "Lambda source directory not found: ${LAMBDA_DIR}"
 fi
