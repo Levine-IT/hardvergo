@@ -23,9 +23,14 @@ export const handler: SQSHandler = async (
 
 	// Process records in parallel for better performance
 	const recordPromises = event.Records.map(async (record, index) => {
-		console.log(`\n--- Processing Record ${index + 1}/${event.Records.length} ---`);
+		console.log(
+			`\n--- Processing Record ${index + 1}/${event.Records.length} ---`,
+		);
 		console.log("Record ID:", record.messageId);
-		console.log("Receipt Handle:", record.receiptHandle?.substring(0, 50) + "...");
+		console.log(
+			"Receipt Handle:",
+			record.receiptHandle?.substring(0, 50) + "...",
+		);
 		console.log("Event Source:", record.eventSource);
 		console.log("Event Source ARN:", record.eventSourceARN);
 		console.log("Raw Body:", record.body);
@@ -39,23 +44,27 @@ export const handler: SQSHandler = async (
 
 			// Validate requested formats
 			const invalidFormats = message.requestedFormats.filter(
-				format => !SUPPORTED_FORMATS.includes(format as any)
+				(format) => !SUPPORTED_FORMATS.includes(format as any),
 			);
 			if (invalidFormats.length > 0) {
-				throw new Error(`Unsupported formats: ${invalidFormats.join(', ')}. Supported formats are: ${SUPPORTED_FORMATS.join(', ')}`);
+				throw new Error(
+					`Unsupported formats: ${invalidFormats.join(", ")}. Supported formats are: ${SUPPORTED_FORMATS.join(", ")}`,
+				);
 			}
 
 			const startTime = Date.now();
 			await optimizeImage(message);
 			const duration = Date.now() - startTime;
 
-			console.log(`✅ Successfully processed image: ${message.imageUrl} (${duration}ms)`);
+			console.log(
+				`✅ Successfully processed image: ${message.imageUrl} (${duration}ms)`,
+			);
 			return { success: true, messageId: record.messageId };
 		} catch (error) {
 			console.error(`❌ Error processing SQS record ${index + 1}:`, {
 				messageId: record.messageId,
 				error: error instanceof Error ? error.message : String(error),
-				stack: error instanceof Error ? error.stack : undefined
+				stack: error instanceof Error ? error.stack : undefined,
 			});
 			return { success: false, messageId: record.messageId, error };
 		}
@@ -63,17 +72,17 @@ export const handler: SQSHandler = async (
 
 	// Wait for all records to process
 	const results = await Promise.allSettled(recordPromises);
-	
+
 	let processedCount = 0;
 	let errorCount = 0;
-	
+
 	results.forEach((result, index) => {
-		if (result.status === 'fulfilled' && result.value.success) {
+		if (result.status === "fulfilled" && result.value.success) {
 			processedCount++;
 		} else {
 			errorCount++;
 			// If any record failed, throw error to trigger DLQ behavior
-			if (result.status === 'fulfilled') {
+			if (result.status === "fulfilled") {
 				throw result.value.error;
 			} else {
 				throw result.reason;
@@ -90,13 +99,12 @@ const RESPONSIVE_BREAKPOINTS = [320, 480, 768, 1024, 1200, 1920];
 
 const SUPPORTED_FORMATS = ["webp", "avif", "jpeg"] as const;
 
-const UPLOAD_TO_S3 = process.env.UPLOAD_TO_S3 === 'true' || false;
+const UPLOAD_TO_S3 = process.env.UPLOAD_TO_S3 === "true" || false;
 
 // Helper function to convert bytes to kilobytes
 function bytesToKB(bytes: number): string {
 	return (bytes / 1024).toFixed(2);
 }
-
 
 const s3Client = new S3Client({
 	region: process.env.AWS_REGION || "us-east-1",
@@ -116,14 +124,18 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 		console.log("📥 Downloading image from:", message.imageUrl);
 		const downloadStart = Date.now();
 		const response = await fetch(message.imageUrl);
-		
+
 		if (!response.ok) {
-			throw new Error(`Failed to download image: ${response.status} ${response.statusText}`);
+			throw new Error(
+				`Failed to download image: ${response.status} ${response.statusText}`,
+			);
 		}
 
 		const imageBuffer = Buffer.from(await response.arrayBuffer());
 		const downloadDuration = Date.now() - downloadStart;
-		console.log(`✅ Image downloaded successfully: ${bytesToKB(imageBuffer.length)} KB (${downloadDuration}ms)`);
+		console.log(
+			`✅ Image downloaded successfully: ${bytesToKB(imageBuffer.length)} KB (${downloadDuration}ms)`,
+		);
 
 		// Get original image metadata
 		console.log("🔍 Analyzing image metadata...");
@@ -142,7 +154,7 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 			channels: metadata.channels,
 			density: metadata.density,
 			hasAlpha: metadata.hasAlpha,
-			space: metadata.space
+			space: metadata.space,
 		});
 
 		// Generate responsive sizes based on breakpoints and aspect ratio
@@ -152,19 +164,22 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 			height: Math.round(width / aspectRatio),
 		}));
 
-		console.log("📐 Generated responsive sizes:", 
-			responsiveSizes.map((s) => `${s.name}: ${s.width}x${s.height}`)
+		console.log(
+			"📐 Generated responsive sizes:",
+			responsiveSizes.map((s) => `${s.name}: ${s.width}x${s.height}`),
 		);
 
 		// Process image for different sizes and formats with serial compression and parallel uploads
-		console.log(`🔧 Starting optimization for ${responsiveSizes.length} sizes × ${message.requestedFormats.length} formats = ${responsiveSizes.length * message.requestedFormats.length} variants`);
+		console.log(
+			`🔧 Starting optimization for ${responsiveSizes.length} sizes × ${message.requestedFormats.length} formats = ${responsiveSizes.length * message.requestedFormats.length} variants`,
+		);
 		console.log(`⚡ Processing with serial compression and parallel uploads`);
-		
+
 		const processingStart = Date.now();
 		await processImageVariantsOptimized(imageBuffer, responsiveSizes, message);
 		const processingDuration = Date.now() - processingStart;
 		const totalDuration = Date.now() - optimizationStart;
-		
+
 		console.log(`✅ All image variants processed successfully!`);
 		console.log(`⏱️ Timing breakdown:
 		- Download: ${downloadDuration}ms
@@ -176,25 +191,24 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 		console.error(`❌ Error optimizing image (after ${totalDuration}ms):`, {
 			imageUrl: message.imageUrl,
 			error: error instanceof Error ? error.message : String(error),
-			stack: error instanceof Error ? error.stack : undefined
+			stack: error instanceof Error ? error.stack : undefined,
 		});
 		throw error;
 	}
 }
 
-
 async function processImageVariantsOptimized(
 	originalBuffer: Buffer,
 	responsiveSizes: Array<{ name: string; width: number; height: number }>,
-	message: ImageOptimizationMessage
+	message: ImageOptimizationMessage,
 ): Promise<void> {
 	// Create base Sharp instance for reuse
 	const baseSharp = sharp(originalBuffer);
-	
+
 	try {
 		// Process compression in series, collect upload tasks
 		const uploadTasks: Promise<void>[] = [];
-		
+
 		// Process each variant sequentially for compression
 		for (const format of message.requestedFormats) {
 			for (const size of responsiveSizes) {
@@ -203,19 +217,19 @@ async function processImageVariantsOptimized(
 					size.name,
 					{ width: size.width, height: size.height },
 					format,
-					message
+					message,
 				);
 				uploadTasks.push(uploadTask);
 			}
 		}
-		
+
 		// Execute all uploads in parallel without restriction
 		console.log(`📤 Starting ${uploadTasks.length} parallel uploads`);
 		await Promise.all(uploadTasks);
 	} finally {
 		// Explicit cleanup - destroy the base Sharp instance
 		baseSharp.destroy();
-		
+
 		// Force garbage collection if available (Lambda containers often have it enabled)
 		if (global.gc) {
 			global.gc();
@@ -231,8 +245,10 @@ async function processImageVariantSeries(
 	message: ImageOptimizationMessage,
 ): Promise<void> {
 	const variantStart = Date.now();
-	console.log(`🎨 Processing ${format} variant for ${sizeName} (${dimensions.width}x${dimensions.height})`);
-	
+	console.log(
+		`🎨 Processing ${format} variant for ${sizeName} (${dimensions.width}x${dimensions.height})`,
+	);
+
 	let optimizedBuffer: Buffer;
 	let contentType: string;
 	let fileExtension: string;
@@ -248,10 +264,10 @@ async function processImageVariantSeries(
 						fit: "cover",
 						position: "centre",
 					})
-					.webp({ 
-						quality: 85, 
+					.webp({
+						quality: 85,
 						effort: 4,
-						nearLossless: false
+						nearLossless: false,
 					})
 					.toBuffer();
 				contentType = "image/webp";
@@ -263,10 +279,10 @@ async function processImageVariantSeries(
 						fit: "cover",
 						position: "centre",
 					})
-					.avif({ 
-						quality: 85, 
+					.avif({
+						quality: 85,
 						effort: 4,
-						chromaSubsampling: '4:2:0'
+						chromaSubsampling: "4:2:0",
 					})
 					.toBuffer();
 				contentType = "image/avif";
@@ -278,35 +294,39 @@ async function processImageVariantSeries(
 						fit: "cover",
 						position: "centre",
 					})
-					.jpeg({ 
+					.jpeg({
 						quality: 85,
 						progressive: true,
-						mozjpeg: true
+						mozjpeg: true,
 					})
 					.toBuffer();
 				contentType = "image/jpeg";
 				fileExtension = "jpg";
 				break;
 			default:
-				throw new Error(`Unsupported format: ${format}. Supported formats are: ${SUPPORTED_FORMATS.join(', ')}`);
+				throw new Error(
+					`Unsupported format: ${format}. Supported formats are: ${SUPPORTED_FORMATS.join(", ")}`,
+				);
 		}
 		const processingDuration = Date.now() - processingStart;
-		console.log(`   ✅ Processed ${format} ${sizeName}: ${bytesToKB(optimizedBuffer.length)} KB (${processingDuration}ms)`);
+		console.log(
+			`   ✅ Processed ${format} ${sizeName}: ${bytesToKB(optimizedBuffer.length)} KB (${processingDuration}ms)`,
+		);
 
 		// Generate S3 key for the optimized image
 		const urlPath = new URL(message.imageUrl).pathname;
-		const filename = urlPath.split('/').pop() || 'image';
+		const filename = urlPath.split("/").pop() || "image";
 		const baseKey = filename.replace(/\.[^/.]+$/, "");
 		optimizedKey = `optimized/${baseKey}-${sizeName}.${fileExtension}`;
 
 		// Return upload task to be executed in parallel later
 		if (UPLOAD_TO_S3) {
 			console.log(`📋 Queuing upload for ${format} variant: ${optimizedKey}`);
-			
+
 			// Upload to S3 (this will execute in parallel)
 			const uploadStart = Date.now();
 			const uploadCommand = new PutObjectCommand({
-				Bucket: process.env.S3_BUCKET || 'default-bucket',
+				Bucket: process.env.S3_BUCKET || "default-bucket",
 				Key: optimizedKey,
 				Body: optimizedBuffer,
 				ContentType: contentType,
@@ -321,25 +341,31 @@ async function processImageVariantSeries(
 
 			await s3Client.send(uploadCommand);
 			const uploadDuration = Date.now() - uploadStart;
-			
+
 			const totalVariantDuration = Date.now() - variantStart;
-			console.log(`   📤 Uploaded ${format} ${sizeName}: ${optimizedKey} (upload: ${uploadDuration}ms, total: ${totalVariantDuration}ms)`);
+			console.log(
+				`   📤 Uploaded ${format} ${sizeName}: ${optimizedKey} (upload: ${uploadDuration}ms, total: ${totalVariantDuration}ms)`,
+			);
 		} else {
-			console.log(`⏭️ Skipping S3 upload for ${format} variant: ${optimizedKey} (${bytesToKB(optimizedBuffer.length)} KB) - UPLOAD_TO_S3 flag is false`);
+			console.log(
+				`⏭️ Skipping S3 upload for ${format} variant: ${optimizedKey} (${bytesToKB(optimizedBuffer.length)} KB) - UPLOAD_TO_S3 flag is false`,
+			);
 		}
 	} catch (error) {
 		const totalVariantDuration = Date.now() - variantStart;
-		console.error(`❌ Error processing ${format} variant for ${sizeName} (after ${totalVariantDuration}ms):`, {
-			error: error instanceof Error ? error.message : String(error),
-			dimensions,
-			format,
-			sizeName,
-			stack: error instanceof Error ? error.stack : undefined
-		});
+		console.error(
+			`❌ Error processing ${format} variant for ${sizeName} (after ${totalVariantDuration}ms):`,
+			{
+				error: error instanceof Error ? error.message : String(error),
+				dimensions,
+				format,
+				sizeName,
+				stack: error instanceof Error ? error.stack : undefined,
+			},
+		);
 		throw error;
 	} finally {
 		// Clean up Sharp instance to free memory
 		sharpInstance.destroy();
 	}
 }
-
