@@ -63,7 +63,7 @@ export const handler: SQSHandler = async (
 				}
 
 				// Only process ObjectCreated events
-				if (!s3Record.eventName.startsWith("s3:ObjectCreated")) {
+				if (!s3Record.eventName.startsWith("ObjectCreated:")) {
 					console.log(
 						`Skipping non-ObjectCreated event: ${s3Record.eventName}`,
 					);
