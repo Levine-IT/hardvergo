@@ -35,7 +35,9 @@ services:
     entrypoint: [ "/bin/sh", "-c" ]
     command:
       - |
-        yum install -y zip
+        yum install -y curl
+        curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
+        yum install -y nodejs zip
         chmod +x /docker/init-queues.sh
         /docker/init-queues.sh
     volumes:

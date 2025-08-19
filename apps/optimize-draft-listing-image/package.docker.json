@@ -1,0 +1,24 @@
+{
+  "name": "optimize-draft-listing-image",
+  "version": "1.0.0",
+  "description": "AWS Lambda function to optimize draft listing images triggered by SQS",
+  "main": "dist/index.js",
+  "scripts": {
+  },
+  "dependencies": {
+    "sharp": "^0.34.3"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "keywords": [
+    "aws",
+    "lambda",
+    "sqs",
+    "image-optimization"
+  ],
+  "author": "",
+  "license": "ISC"
+}

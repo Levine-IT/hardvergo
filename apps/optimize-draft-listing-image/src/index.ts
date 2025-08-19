@@ -1,9 +1,14 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import type { Context, SQSEvent, SQSHandler } from "aws-lambda";
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
+import type { Context, S3Event, SQSEvent, SQSHandler } from "aws-lambda";
 import sharp from "sharp";
 
-interface ImageOptimizationMessage {
-	imageUrl: string;
+interface S3ImageOptimizationMessage {
+	bucketName: string;
+	objectKey: string;
 	requestedFormats: string[];
 }
 
@@ -21,74 +26,94 @@ export const handler: SQSHandler = async (
 	console.log("SQS Event Records Count:", event.Records.length);
 	console.log("Processing SQS event:", JSON.stringify(event, null, 2));
 
-	// Process records in parallel for better performance
-	const recordPromises = event.Records.map(async (record, index) => {
+	// Process records synchronously for better error handling
+	let processedCount = 0;
+	let errorCount = 0;
+
+	for (let index = 0; index < event.Records.length; index++) {
+		const record = event.Records[index];
 		console.log(
 			`\n--- Processing Record ${index + 1}/${event.Records.length} ---`,
 		);
 		console.log("Record ID:", record.messageId);
-		console.log(
-			"Receipt Handle:",
-			record.receiptHandle?.substring(0, 50) + "...",
-		);
 		console.log("Event Source:", record.eventSource);
 		console.log("Event Source ARN:", record.eventSourceARN);
 		console.log("Raw Body:", record.body);
 
 		try {
-			const message: ImageOptimizationMessage = JSON.parse(record.body);
-			console.log("Parsed message successfully:", {
-				imageUrl: message.imageUrl,
-				requestedFormats: message.requestedFormats,
+			// Parse the SQS message which contains an S3 event
+			const s3Event: S3Event = JSON.parse(record.body);
+			console.log("Parsed S3 event successfully:", {
+				recordsCount: s3Event.Records.length,
 			});
 
-			// Validate requested formats
-			const invalidFormats = message.requestedFormats.filter(
-				(format) => !SUPPORTED_FORMATS.includes(format as any),
-			);
-			if (invalidFormats.length > 0) {
-				throw new Error(
-					`Unsupported formats: ${invalidFormats.join(", ")}. Supported formats are: ${SUPPORTED_FORMATS.join(", ")}`,
+			// Process each S3 record in the event
+			for (const s3Record of s3Event.Records) {
+				console.log("Processing S3 record:", {
+					eventName: s3Record.eventName,
+					bucketName: s3Record.s3.bucket.name,
+					objectKey: s3Record.s3.object.key,
+					objectSize: s3Record.s3.object.size,
+				});
+
+				// Skip test events gracefully
+				if (s3Record.eventName === "s3:TestEvent") {
+					console.log("🧪 Ignoring S3 test event gracefully");
+					continue;
+				}
+
+				// Only process ObjectCreated events
+				if (!s3Record.eventName.startsWith("s3:ObjectCreated")) {
+					console.log(
+						`Skipping non-ObjectCreated event: ${s3Record.eventName}`,
+					);
+					continue;
+				}
+
+				// Skip non-image files based on file extension
+				const objectKey = s3Record.s3.object.key;
+				const fileExtension = objectKey.split(".").pop()?.toLowerCase();
+				const imageExtensions = [
+					"jpg",
+					"jpeg",
+					"png",
+					"gif",
+					"bmp",
+					"tiff",
+					"webp",
+					"avif",
+				];
+
+				if (!fileExtension || !imageExtensions.includes(fileExtension)) {
+					console.log(`Skipping non-image file: ${objectKey}`);
+					continue;
+				}
+
+				const startTime = Date.now();
+				await optimizeS3Image({
+					bucketName: s3Record.s3.bucket.name,
+					objectKey: objectKey,
+					requestedFormats: SUPPORTED_FORMATS.slice(), // Use all supported formats by default
+				});
+				const duration = Date.now() - startTime;
+
+				console.log(
+					`✅ Successfully processed S3 object: ${objectKey} (${duration}ms)`,
 				);
 			}
 
-			const startTime = Date.now();
-			await optimizeImage(message);
-			const duration = Date.now() - startTime;
-
-			console.log(
-				`✅ Successfully processed image: ${message.imageUrl} (${duration}ms)`,
-			);
-			return { success: true, messageId: record.messageId };
+			processedCount++;
 		} catch (error) {
+			errorCount++;
 			console.error(`❌ Error processing SQS record ${index + 1}:`, {
 				messageId: record.messageId,
 				error: error instanceof Error ? error.message : String(error),
 				stack: error instanceof Error ? error.stack : undefined,
 			});
-			return { success: false, messageId: record.messageId, error };
-		}
-	});
-
-	// Wait for all records to process
-	const results = await Promise.allSettled(recordPromises);
-
-	let processedCount = 0;
-	let errorCount = 0;
-
-	results.forEach((result, index) => {
-		if (result.status === "fulfilled" && result.value.success) {
-			processedCount++;
-		} else {
-			errorCount++;
 			// If any record failed, throw error to trigger DLQ behavior
-			if (result.status === "fulfilled") {
-				throw result.value.error;
-			} else {
-				throw result.reason;
-			}
+			throw error;
 		}
-	});
+	}
 
 	console.log("\n=== Lambda Handler Completed ===");
 	console.log(`Processed: ${processedCount}, Errors: ${errorCount}`);
@@ -115,26 +140,48 @@ const s3Client = new S3Client({
 	},
 });
 
-async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
-	console.log("🔄 Starting image optimization for:", message.imageUrl);
+async function optimizeS3Image(
+	message: S3ImageOptimizationMessage,
+): Promise<void> {
+	console.log(
+		"🔄 Starting S3 image optimization for:",
+		`s3://${message.bucketName}/${message.objectKey}`,
+	);
 	const optimizationStart = Date.now();
 
 	try {
-		// Download the image
-		console.log("📥 Downloading image from:", message.imageUrl);
+		// Download the image from S3
+		console.log(
+			"📥 Downloading image from S3:",
+			`s3://${message.bucketName}/${message.objectKey}`,
+		);
 		const downloadStart = Date.now();
-		const response = await fetch(message.imageUrl);
 
-		if (!response.ok) {
-			throw new Error(
-				`Failed to download image: ${response.status} ${response.statusText}`,
-			);
+		const getObjectCommand = new GetObjectCommand({
+			Bucket: message.bucketName,
+			Key: message.objectKey,
+		});
+
+		const response = await s3Client.send(getObjectCommand);
+
+		if (!response.Body) {
+			throw new Error("S3 object has no body");
 		}
 
-		const imageBuffer = Buffer.from(await response.arrayBuffer());
+		// Convert stream to buffer
+		const chunks: Uint8Array[] = [];
+		const reader = response.Body.transformToWebStream().getReader();
+
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			chunks.push(value);
+		}
+
+		const imageBuffer = Buffer.concat(chunks);
 		const downloadDuration = Date.now() - downloadStart;
 		console.log(
-			`✅ Image downloaded successfully: ${bytesToKB(imageBuffer.length)} KB (${downloadDuration}ms)`,
+			`✅ Image downloaded successfully from S3: ${bytesToKB(imageBuffer.length)} KB (${downloadDuration}ms)`,
 		);
 
 		// Get original image metadata
@@ -176,7 +223,11 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 		console.log(`⚡ Processing with serial compression and parallel uploads`);
 
 		const processingStart = Date.now();
-		await processImageVariantsOptimized(imageBuffer, responsiveSizes, message);
+		await processS3ImageVariantsOptimized(
+			imageBuffer,
+			responsiveSizes,
+			message,
+		);
 		const processingDuration = Date.now() - processingStart;
 		const totalDuration = Date.now() - optimizationStart;
 
@@ -188,8 +239,9 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 		- Total: ${totalDuration}ms`);
 	} catch (error) {
 		const totalDuration = Date.now() - optimizationStart;
-		console.error(`❌ Error optimizing image (after ${totalDuration}ms):`, {
-			imageUrl: message.imageUrl,
+		console.error(`❌ Error optimizing S3 image (after ${totalDuration}ms):`, {
+			bucketName: message.bucketName,
+			objectKey: message.objectKey,
 			error: error instanceof Error ? error.message : String(error),
 			stack: error instanceof Error ? error.stack : undefined,
 		});
@@ -197,10 +249,10 @@ async function optimizeImage(message: ImageOptimizationMessage): Promise<void> {
 	}
 }
 
-async function processImageVariantsOptimized(
+async function processS3ImageVariantsOptimized(
 	originalBuffer: Buffer,
 	responsiveSizes: Array<{ name: string; width: number; height: number }>,
-	message: ImageOptimizationMessage,
+	message: S3ImageOptimizationMessage,
 ): Promise<void> {
 	// Create base Sharp instance for reuse
 	const baseSharp = sharp(originalBuffer);
@@ -212,7 +264,7 @@ async function processImageVariantsOptimized(
 		// Process each variant sequentially for compression
 		for (const format of message.requestedFormats) {
 			for (const size of responsiveSizes) {
-				const uploadTask = processImageVariantSeries(
+				const uploadTask = processS3ImageVariantSeries(
 					baseSharp.clone(),
 					size.name,
 					{ width: size.width, height: size.height },
@@ -237,12 +289,12 @@ async function processImageVariantsOptimized(
 	}
 }
 
-async function processImageVariantSeries(
+async function processS3ImageVariantSeries(
 	sharpInstance: sharp.Sharp,
 	sizeName: string,
 	dimensions: { width: number; height: number },
 	format: string,
-	message: ImageOptimizationMessage,
+	message: S3ImageOptimizationMessage,
 ): Promise<void> {
 	const variantStart = Date.now();
 	console.log(
@@ -313,9 +365,8 @@ async function processImageVariantSeries(
 			`   ✅ Processed ${format} ${sizeName}: ${bytesToKB(optimizedBuffer.length)} KB (${processingDuration}ms)`,
 		);
 
-		// Generate S3 key for the optimized image
-		const urlPath = new URL(message.imageUrl).pathname;
-		const filename = urlPath.split("/").pop() || "image";
+		// Generate S3 key for the optimized image based on original S3 object key
+		const filename = message.objectKey.split("/").pop() || "image";
 		const baseKey = filename.replace(/\.[^/.]+$/, "");
 		optimizedKey = `optimized/${baseKey}-${sizeName}.${fileExtension}`;
 
@@ -326,12 +377,13 @@ async function processImageVariantSeries(
 			// Upload to S3 (this will execute in parallel)
 			const uploadStart = Date.now();
 			const uploadCommand = new PutObjectCommand({
-				Bucket: process.env.S3_BUCKET || "default-bucket",
+				Bucket: process.env.S3_BUCKET || message.bucketName, // Use source bucket if no destination specified
 				Key: optimizedKey,
 				Body: optimizedBuffer,
 				ContentType: contentType,
 				Metadata: {
-					originalUrl: message.imageUrl,
+					originalBucket: message.bucketName,
+					originalKey: message.objectKey,
 					size: sizeName,
 					format: format,
 					width: dimensions.width.toString(),

@@ -15,8 +15,6 @@ NC='\033[0m' # No Color
 ENDPOINT_URL="${LOCALSTACK_ENDPOINT:-http://localhost:4566}"
 PROFILE_NAME="localstack"
 BUCKET_NAME="draft-listing-images"
-SHARP_LAYER_URL="https://github.com/pH200/sharp-layer/releases/download/0.34.3/release-x64.zip"
-SHARP_LAYER_NAME="sharp-layer"
 
 # Default queues to create (can be overridden by command line arguments)
 DEFAULT_QUEUES=("optimize-draft-images")
@@ -155,55 +153,6 @@ for QUEUE_NAME in "${QUEUES[@]}"; do
     fi
 done
 
-# Create Lambda layer for Sharp
-echo ""
-echo "📚 Creating Lambda layer for Sharp..."
-
-create_sharp_layer() {
-    print_info "Downloading Sharp layer..." >&2
-    
-    # Download the Sharp layer if it doesn't exist
-    if [ ! -f "sharp-layer.zip" ]; then
-        if command -v curl &> /dev/null; then
-            curl -L -o sharp-layer.zip "${SHARP_LAYER_URL}" >&2
-        elif command -v wget &> /dev/null; then
-            wget -O sharp-layer.zip "${SHARP_LAYER_URL}" >&2
-        else
-            print_error "Neither curl nor wget is available to download Sharp layer" >&2
-            return 1
-        fi
-    fi
-    
-    if [ ! -f "sharp-layer.zip" ]; then
-        print_error "Failed to download Sharp layer" >&2
-        return 1
-    fi
-    
-    print_info "Creating Sharp Lambda layer..." >&2
-    
-    # Create or update the Lambda layer
-    LAYER_VERSION=$(aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda publish-layer-version \
-        --layer-name ${SHARP_LAYER_NAME} \
-        --zip-file fileb://sharp-layer.zip \
-        --compatible-runtimes nodejs22.x \
-        --compatible-architectures x86_64 \
-        --query 'Version' --output text 2>/dev/null || echo "")
-    
-    if [ -n "$LAYER_VERSION" ]; then
-        print_status "Sharp layer created with version: ${LAYER_VERSION}" >&2
-        echo "$LAYER_VERSION"
-    else
-        print_error "Failed to create Sharp layer" >&2
-        return 1
-    fi
-}
-
-# Create the Sharp layer
-SHARP_LAYER_VERSION=$(create_sharp_layer)
-if [ $? -ne 0 ]; then
-    print_error "Failed to create Sharp layer, continuing without it"
-    SHARP_LAYER_VERSION=""
-fi
 
 # Deploy Lambda function from dist folder
 echo ""
@@ -217,15 +166,29 @@ deploy_lambda() {
     if [ -d "$DIST_DIR" ] && [ "$(ls -A $DIST_DIR)" ]; then
         print_info "Creating deployment package from dist folder..."
         cd "$DIST_DIR"
-        zip -r ../function.zip *
-        cd "$LAMBDA_DIR"
         
-        # Build layers configuration
-        LAYERS_CONFIG=""
-        if [ -n "$SHARP_LAYER_VERSION" ]; then
-            LAYER_ARN="arn:aws:lambda:eu-central-1:000000000000:layer:${SHARP_LAYER_NAME}:${SHARP_LAYER_VERSION}"
-            LAYERS_CONFIG="--layers ${LAYER_ARN}"
-        fi
+        # Create a temporary directory for the deployment package
+        TEMP_DEPLOY_DIR=$(mktemp -d)
+        print_info "Temporary deployment directory created: $TEMP_DEPLOY_DIR"
+        
+        # Copy all files from dist to temp directory
+        cp -r * "$TEMP_DEPLOY_DIR/"
+        
+        # Handle dependencies with cross-platform native binaries for npm
+        cd "$TEMP_DEPLOY_DIR"
+        
+        # Copy package.docker.json
+        cp "$LAMBDA_DIR/package.docker.json" .
+        
+        # Install dependencies with Linux binaries for Lambda compatibility using npm
+        npm install --cpu=x64 --os=linux --libc=glibc sharp
+        
+        # Create the deployment zip from the temp directory
+        zip -r "$LAMBDA_DIR/function.zip" *
+        
+        # Clean up temp directory
+        # rm -rf "$TEMP_DEPLOY_DIR"
+        cd "$LAMBDA_DIR"
         
         # Deploy or update Lambda function
         print_info "Deploying Lambda function..."
@@ -239,16 +202,8 @@ deploy_lambda() {
             aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda update-function-code \
                 --function-name ${LAMBDA_NAME} \
                 --zip-file fileb://function.zip
-            
-            # Update layers if Sharp layer is available
-            if [ -n "$SHARP_LAYER_VERSION" ]; then
-                LAYER_ARN="arn:aws:lambda:eu-central-1:000000000000:layer:${SHARP_LAYER_NAME}:${SHARP_LAYER_VERSION}"
-                aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda update-function-configuration \
-                    --function-name ${LAMBDA_NAME} \
-                    --layers ${LAYER_ARN} 2>/dev/null || print_warning "Failed to update Lambda layers"
-            fi
         else
-            print_info "Creating new function... with ${LAYERS_CONFIG}"
+            print_info "Creating new function..."
             # Create new function
             aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} lambda create-function \
                 --function-name ${LAMBDA_NAME} \
@@ -257,14 +212,10 @@ deploy_lambda() {
                 --handler index.handler \
                 --zip-file fileb://function.zip \
                 --timeout 300 \
-                --memory-size 512 \
-                $LAYERS_CONFIG
+                --memory-size 512
         fi
         
-        print_status "Lambda function deployed successfully"
-        if [ -n "$SHARP_LAYER_VERSION" ]; then
-            print_status "Sharp layer attached to Lambda function"
-        fi
+        print_status "Lambda function deployed successfully with bundled dependencies"
         
         # Clean up
         rm -f function.zip
