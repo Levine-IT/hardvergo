@@ -10,6 +10,108 @@ services:
       - "54323:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+  localstack:
+    image: localstack/localstack:latest
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - SERVICES=sqs,s3,lambda
+      - DEBUG=1
+      - DATA_DIR=/var/lib/localstack
+      - PERSISTENCE=1
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - localstack_data:/var/lib/localstack
+    networks:
+      - app-network
+
+  localstack-init:
+    image: amazon/aws-cli:latest
+    container_name: localstack-init
+    entrypoint: [ "/bin/sh", "-c" ]
+    command:
+      - |
+        yum install -y curl
+        curl -fsSL https://rpm.nodesource.com/setup_22.x | bash -
+        yum install -y nodejs zip
+        chmod +x /docker/init-queues.sh
+        /docker/init-queues.sh
+    volumes:
+      - "./docker:/docker"
+      - "./apps/optimize-draft-listing-image:/apps/optimize-draft-listing-image"
+    environment:
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - AWS_DEFAULT_REGION=eu-central-1
+      - LOCALSTACK_ENDPOINT=http://localstack:4566
+    depends_on:
+      - localstack
+    networks:
+      - app-network
+  sqs-admin:
+    image: pacovk/sqs-admin:latest
+    container_name: sqs-admin
+    ports:
+      - "3999:3999"
+    environment:
+      - SQS_ENDPOINT_URL=http://localstack:4566
+      - SQS_AWS_REGION=eu-central-1
+    depends_on:
+      - localstack
+    networks:
+      - app-network
+
+  s3manager:
+    image: cloudlena/s3manager
+    container_name: s3manager
+    ports:
+      - "8080:8080"
+    environment:
+      - ENDPOINT=localstack:4566
+      - ACCESS_KEY_ID=test
+      - SECRET_ACCESS_KEY=test
+      - USE_SSL=false
+      - ALLOW_DELETE=true
+    depends_on:
+      - localstack
+    networks:
+      - app-network
+
+  minio:
+    image: minio/minio:latest
+    container_name: minio-s3
+    ports:
+      - "9000:9000" # MinIO API port
+      - "9001:9001" # MinIO Console port
+    environment:
+      - MINIO_ROOT_USER=minioadmin
+      - MINIO_ROOT_PASSWORD=minioadmin
+      - MINIO_DOMAIN=localhost
+      - MINIO_SERVER_URL=http://localhost:9000
+      - MINIO_BROWSER_REDIRECT_URL=http://localhost:9001
+      - MINIO_LOG_LEVEL=DEBUG
+      - MINIO_API_REQUESTS_MAX=1000
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
 
 volumes:
   postgres_data:
+  minio_data:
+  localstack_data:

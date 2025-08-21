@@ -1,0 +1,19 @@
+FROM public.ecr.aws/lambda/nodejs:18
+
+# Install development dependencies
+RUN npm install -g nodemon typescript
+
+# Copy package files
+COPY package*.json ${LAMBDA_TASK_ROOT}/
+
+# Install all dependencies (including dev dependencies)
+RUN npm install
+
+# Copy source code
+COPY . ${LAMBDA_TASK_ROOT}/
+
+# Build the TypeScript code
+RUN npm run build
+
+# Set the CMD to your handler
+CMD [ "index.handler" ]
