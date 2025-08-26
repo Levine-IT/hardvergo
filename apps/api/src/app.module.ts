@@ -1,7 +1,7 @@
+import * as schema from "@hardvergo/database/schema";
 import { DrizzlePGModule } from "@knaadh/nestjs-drizzle-pg";
 import { Module } from "@nestjs/common";
 import { ConfigModule } from "@nestjs/config";
-import * as schema from "../db/schema";
 import { AttributesModule } from "./attributes/attributes.module";
 import { CategoriesModule } from "./categories/categories.module";
 import { ListingsModule } from "./listings/listings.module";

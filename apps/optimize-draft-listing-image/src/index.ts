@@ -5,6 +5,7 @@ import {
 } from "@aws-sdk/client-s3";
 import type { Context, S3Event, SQSEvent, SQSHandler } from "aws-lambda";
 import sharp from "sharp";
+import { getDatabaseClient, isDatabaseEnabled } from "./database";
 
 interface S3ImageOptimizationMessage {
 	bucketName: string;
@@ -41,8 +42,28 @@ export const handler: SQSHandler = async (
 		console.log("Raw Body:", record.body);
 
 		try {
-			// Parse the SQS message which contains an S3 event
-			const s3Event: S3Event = JSON.parse(record.body);
+			// Parse the SQS message body
+			const messageBody = JSON.parse(record.body);
+
+			// Check if this is a direct S3 test event (not wrapped in S3Event structure)
+			if (
+				messageBody.Service === "Amazon S3" &&
+				messageBody.Event === "s3:TestEvent"
+			) {
+				console.log("🧪 Ignoring S3 test event gracefully");
+				processedCount++;
+				continue;
+			}
+
+			// Validate that this is a proper S3Event structure
+			if (!messageBody.Records || !Array.isArray(messageBody.Records)) {
+				console.log("⚠️ Skipping message - not a valid S3Event structure");
+				processedCount++;
+				continue;
+			}
+
+			// Parse as S3Event for normal S3 events
+			const s3Event: S3Event = messageBody;
 			console.log("Parsed S3 event successfully:", {
 				recordsCount: s3Event.Records.length,
 			});
@@ -55,12 +76,6 @@ export const handler: SQSHandler = async (
 					objectKey: s3Record.s3.object.key,
 					objectSize: s3Record.s3.object.size,
 				});
-
-				// Skip test events gracefully
-				if (s3Record.eventName === "s3:TestEvent") {
-					console.log("🧪 Ignoring S3 test event gracefully");
-					continue;
-				}
 
 				// Only process ObjectCreated events
 				if (!s3Record.eventName.startsWith("ObjectCreated:")) {
@@ -403,6 +418,16 @@ async function processS3ImageVariantSeries(
 				`⏭️ Skipping S3 upload for ${format} variant: ${optimizedKey} (${bytesToKB(optimizedBuffer.length)} KB) - UPLOAD_TO_S3 flag is false`,
 			);
 		}
+
+		// Record the optimized image variant in the database
+		await recordOptimizedImageVariant(
+			message.objectKey,
+			optimizedKey,
+			dimensions.width,
+			dimensions.height,
+			optimizedBuffer.length,
+			format,
+		);
 	} catch (error) {
 		const totalVariantDuration = Date.now() - variantStart;
 		console.error(
@@ -419,5 +444,47 @@ async function processS3ImageVariantSeries(
 	} finally {
 		// Clean up Sharp instance to free memory
 		sharpInstance.destroy();
+	}
+}
+
+async function recordOptimizedImageVariant(
+	originalS3Key: string,
+	optimizedS3Key: string,
+	width: number,
+	height: number,
+	fileSize: number,
+	format: string,
+): Promise<void> {
+	if (!isDatabaseEnabled()) {
+		console.log("📊 Database not enabled, skipping variant recording");
+		return;
+	}
+
+	try {
+		const db = getDatabaseClient();
+		console.log(
+			`📊 Testing database connection and recording variant: ${optimizedS3Key}`,
+		);
+
+		// Simple connection test - query users table count
+		const userCount = await db.query.users.findMany({ limit: 1 });
+		console.log(
+			`✅ Database connection successful! Found ${userCount.length} users (showing first 1)`,
+		);
+
+		// In a real implementation, you would:
+		// 1. Find or create the media item record based on originalS3Key
+		// 2. Insert the image variant into the imageVariants table
+		// This is just a placeholder showing how to use the database
+
+		console.log(
+			`✅ Would record variant: ${optimizedS3Key} (${width}x${height}, ${format}, ${fileSize} bytes)`,
+		);
+	} catch (error) {
+		console.error(
+			"❌ Error with database connection or recording variant:",
+			error,
+		);
+		// Don't throw - this is not critical to the main optimization process
 	}
 }

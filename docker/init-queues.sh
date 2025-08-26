@@ -187,7 +187,7 @@ deploy_lambda() {
         zip -r "$LAMBDA_DIR/function.zip" *
         
         # Clean up temp directory
-        # rm -rf "$TEMP_DEPLOY_DIR"
+        rm -rf "$TEMP_DEPLOY_DIR"
         cd "$LAMBDA_DIR"
         
         # Deploy or update Lambda function

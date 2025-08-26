@@ -32,6 +32,9 @@ importers:
       '@aws-sdk/s3-presigned-post':
         specifier: ^3.859.0
         version: 3.859.0
+      '@hardvergo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@knaadh/nestjs-drizzle-pg':
         specifier: ^1.2.0
         version: 1.2.0(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(drizzle-orm@0.44.4(@types/pg@8.15.5)(pg@8.16.3))(pg@8.16.3)
@@ -265,6 +268,9 @@ importers:
       '@aws-sdk/client-sqs':
         specifier: ^3.0.0
         version: 3.864.0
+      '@hardvergo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
@@ -283,6 +289,28 @@ importers:
         version: 0.25.9
       typescript:
         specifier: ^5.0.0
+        version: 5.8.3
+
+  packages/database:
+    dependencies:
+      drizzle-orm:
+        specifier: ^0.44.4
+        version: 0.44.4(@types/pg@8.15.5)(pg@8.16.3)
+      pg:
+        specifier: ^8.16.3
+        version: 8.16.3
+    devDependencies:
+      '@types/node':
+        specifier: ^22.0.0
+        version: 22.15.3
+      '@types/pg':
+        specifier: ^8.15.5
+        version: 8.15.5
+      drizzle-kit:
+        specifier: ^0.31.4
+        version: 0.31.4
+      typescript:
+        specifier: ^5.7.3
         version: 5.8.3
 
   packages/typescript-config: {}
@@ -9685,7 +9713,7 @@ snapshots:
 
   '@types/pg@8.15.5':
     dependencies:
-      '@types/node': 20.19.9
+      '@types/node': 22.15.3
       pg-protocol: 1.10.3
       pg-types: 2.2.0
 
