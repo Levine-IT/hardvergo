@@ -9,7 +9,7 @@ export class Logger {
 	constructor(context?: Context) {
 		this.context = context;
 		this.winston = winston.createLogger({
-			level: process.env.LOG_LEVEL || "info",
+			level: process.env.LOG_LEVEL || "debug",
 			format: winston.format.combine(
 				winston.format.timestamp(),
 				winston.format.errors({ stack: true }),

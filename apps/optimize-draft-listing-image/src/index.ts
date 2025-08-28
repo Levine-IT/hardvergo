@@ -1,11 +1,11 @@
 import type { Context, SQSEvent, SQSHandler } from "aws-lambda";
 import { UPLOAD_TO_S3 } from "./constants";
+import { getDatabaseClient } from "./database";
 import { DatabaseRecorder } from "./database-recorder";
 import { EventParser } from "./event-parser";
 import { ImageProcessor } from "./image-processor";
 import { Logger } from "./logger";
 import { S3Service } from "./s3-client";
-import { getDatabaseClient } from "./database";
 
 // Initialize database client outside handler for better performance
 const databaseClient = getDatabaseClient();

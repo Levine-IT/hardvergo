@@ -1,11 +1,12 @@
+import type { DatabaseClient } from "@hardvergo/database";
 import { isDatabaseEnabled } from "./database";
 import type { Logger } from "./logger";
 
 export class DatabaseRecorder {
 	private logger: Logger;
-	private db: any;
+	private db: DatabaseClient;
 
-	constructor(logger: Logger, databaseClient: any) {
+	constructor(logger: Logger, databaseClient: DatabaseClient) {
 		this.logger = logger;
 		this.db = databaseClient;
 	}
