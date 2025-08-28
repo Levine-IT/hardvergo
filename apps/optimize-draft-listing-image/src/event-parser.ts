@@ -1,12 +1,12 @@
 import type { S3Event, SQSRecord } from "aws-lambda";
 import { IMAGE_EXTENSIONS, SUPPORTED_FORMATS } from "./constants";
+import type { LamdbaLogger } from "./lamdba-logger";
 import type { S3ImageOptimizationMessage } from "./types";
-import type { Logger } from "./logger";
 
 export class EventParser {
-	private logger: Logger;
+	private logger: LamdbaLogger;
 
-	constructor(logger: Logger) {
+	constructor(logger: LamdbaLogger) {
 		this.logger = logger;
 	}
 

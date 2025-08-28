@@ -4,13 +4,13 @@ import {
 	S3Client,
 } from "@aws-sdk/client-s3";
 import { S3_CONFIG, UPLOAD_TO_S3 } from "./constants";
-import type { Logger } from "./logger";
+import type { LamdbaLogger } from "./lamdba-logger";
 
 export class S3Service {
 	private client: S3Client;
-	private logger: Logger;
+	private logger: LamdbaLogger;
 
-	constructor(logger: Logger) {
+	constructor(logger: LamdbaLogger) {
 		this.logger = logger;
 		this.client = new S3Client({
 			region: S3_CONFIG.region,

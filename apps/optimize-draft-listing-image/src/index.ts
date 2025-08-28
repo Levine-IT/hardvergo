@@ -3,8 +3,9 @@ import { UPLOAD_TO_S3 } from "./constants";
 import { getDatabaseClient } from "./database";
 import { DatabaseRecorder } from "./database-recorder";
 import { EventParser } from "./event-parser";
+import { ImageLogger } from "./image-logger";
 import { ImageProcessor } from "./image-processor";
-import { Logger } from "./logger";
+import { LamdbaLogger } from "./lamdba-logger";
 import { S3Service } from "./s3-client";
 
 // Initialize database client outside handler for better performance
@@ -14,20 +15,12 @@ export const handler: SQSHandler = async (
 	event: SQSEvent,
 	context: Context,
 ): Promise<void> => {
-	const logger = new Logger(context);
+	const logger = new LamdbaLogger(context);
 	const s3Service = new S3Service(logger);
 	const databaseRecorder = new DatabaseRecorder(logger, databaseClient);
-	const imageProcessor = new ImageProcessor(
-		logger,
-		s3Service,
-		databaseRecorder,
-	);
 	const eventParser = new EventParser(logger);
 
-	logger.logLambdaStart();
-	logger.info("Upload to S3 flag", { flag: UPLOAD_TO_S3 });
-	logger.info("SQS Event Records Count", { count: event.Records.length });
-	logger.debug("Processing SQS event", { event: event });
+	logger.logLambdaStart(UPLOAD_TO_S3, event);
 
 	let processedCount = 0;
 	let errorCount = 0;
@@ -52,11 +45,18 @@ export const handler: SQSHandler = async (
 
 			for (const message of optimizationMessages) {
 				const startTime = Date.now();
+				const imageLogger = new ImageLogger(logger, message);
+
+				const imageProcessor = new ImageProcessor(
+					imageLogger,
+					s3Service,
+					databaseRecorder,
+				);
 
 				await imageProcessor.optimizeImage(message);
 
 				const duration = Date.now() - startTime;
-				logger.info(
+				imageLogger.info(
 					`✅ Successfully processed S3 object: ${message.objectKey} (${duration}ms)`,
 				);
 			}

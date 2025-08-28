@@ -7,8 +7,8 @@ import {
 	UPLOAD_TO_S3,
 } from "./constants";
 import type { DatabaseRecorder } from "./database-recorder";
-import type { Logger } from "./logger";
-import { bytesToKB } from "./logger";
+import type { ImageLogger } from "./image-logger";
+import { bytesToKB } from "./lamdba-logger";
 import type { S3Service } from "./s3-client";
 import type {
 	ImageDimensions,
@@ -18,12 +18,12 @@ import type {
 } from "./types";
 
 export class ImageProcessor {
-	private logger: Logger;
+	private logger: ImageLogger;
 	private s3Service: S3Service;
 	private databaseRecorder?: DatabaseRecorder;
 
 	constructor(
-		logger: Logger,
+		logger: ImageLogger,
 		s3Service: S3Service,
 		databaseRecorder?: DatabaseRecorder,
 	) {

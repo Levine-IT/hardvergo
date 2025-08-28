@@ -1,6 +1,6 @@
 import type { SQSRecord } from "aws-lambda";
 import { EventParser } from "./event-parser";
-import type { Logger } from "./logger";
+import type { LamdbaLogger } from "./lamdba-logger";
 
 // Mock the Logger
 jest.mock("./logger");
@@ -14,7 +14,7 @@ const FAKE_SQS_ATTRIBUTES = {
 
 describe("EventParser", () => {
 	let eventParser: EventParser;
-	let mockLogger: jest.Mocked<Logger>;
+	let mockLogger: jest.Mocked<LamdbaLogger>;
 
 	beforeEach(() => {
 		mockLogger = {
