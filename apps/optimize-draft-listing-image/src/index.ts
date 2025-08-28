@@ -25,9 +25,9 @@ export const handler: SQSHandler = async (
 	const eventParser = new EventParser(logger);
 
 	logger.logLambdaStart();
-	logger.info("Upload to S3 flag", UPLOAD_TO_S3);
-	logger.info("SQS Event Records Count", event.Records.length);
-	logger.debug("Processing SQS event", JSON.stringify(event, null, 2));
+	logger.info("Upload to S3 flag", { flag: UPLOAD_TO_S3 });
+	logger.info("SQS Event Records Count", { count: event.Records.length });
+	logger.debug("Processing SQS event", { event: event });
 
 	let processedCount = 0;
 	let errorCount = 0;

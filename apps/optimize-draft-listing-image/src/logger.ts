@@ -36,20 +36,36 @@ export class Logger {
 		});
 	}
 
-	info(message: string, data?: any): void {
-		this.winston.info(message, data);
+	info(message: string, ...meta: any[]): Logger;
+	info(message: any): Logger;
+	info(infoObject: object): Logger;
+	info(message: any, ...meta: any[]): Logger {
+		this.winston.info(message, ...meta);
+		return this;
 	}
 
-	error(message: string, data?: any): void {
-		this.winston.error(message, data);
+	error(message: string, ...meta: any[]): Logger;
+	error(message: any): Logger;
+	error(infoObject: object): Logger;
+	error(message: any, ...meta: any[]): Logger {
+		this.winston.error(message, ...meta);
+		return this;
 	}
 
-	debug(message: string, data?: any): void {
-		this.winston.debug(message, data);
+	warn(message: string, ...meta: any[]): Logger;
+	warn(message: any): Logger;
+	warn(infoObject: object): Logger;
+	warn(message: any, ...meta: any[]): Logger {
+		this.winston.warn(message, ...meta);
+		return this;
 	}
 
-	warn(message: string, data?: any): void {
-		this.winston.warn(message, data);
+	debug(message: string, ...meta: any[]): Logger;
+	debug(message: any): Logger;
+	debug(infoObject: object): Logger;
+	debug(message: any, ...meta: any[]): Logger {
+		this.winston.debug(message, ...meta);
+		return this;
 	}
 
 	logLambdaStart(): void {

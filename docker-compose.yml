@@ -90,7 +90,7 @@ services:
       - "8888:8080"
     environment:
       - DOZZLE_LEVEL=info
-      - DOZZLE_TAILSIZE=300
+      - DOZZLE_TAILSIZE=1200
     networks:
       - app-network
 
