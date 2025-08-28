@@ -15,6 +15,7 @@ NC='\033[0m' # No Color
 ENDPOINT_URL="${LOCALSTACK_ENDPOINT:-http://localhost:4566}"
 PROFILE_NAME="localstack"
 BUCKET_NAME="draft-listing-images"
+OPTIMIZED_BUCKET_NAME="optimized-draft-listing-images"
 
 # Default queues to create (can be overridden by command line arguments)
 DEFAULT_QUEUES=("optimize-draft-images")
@@ -100,12 +101,12 @@ fi
 
 print_info "LocalStack is running and healthy"
 
-# Create S3 bucket
+# Create S3 buckets
 echo ""
-echo "🪣 Creating S3 bucket..."
+echo "🪣 Creating S3 buckets..."
 print_info "Creating S3 bucket: ${BUCKET_NAME}"
 
-# Create the S3 bucket
+# Create the S3 bucket for draft images
 aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 mb s3://${BUCKET_NAME} 2>/dev/null || \
     print_warning "Bucket '${BUCKET_NAME}' might already exist"
 
@@ -114,6 +115,19 @@ if aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 ls s3://${BUC
     print_status "S3 bucket '${BUCKET_NAME}' is ready"
 else
     print_error "Failed to create or access S3 bucket '${BUCKET_NAME}'"
+fi
+
+print_info "Creating S3 bucket: ${OPTIMIZED_BUCKET_NAME}"
+
+# Create the S3 bucket for optimized images (no Lambda trigger)
+aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 mb s3://${OPTIMIZED_BUCKET_NAME} 2>/dev/null || \
+    print_warning "Bucket '${OPTIMIZED_BUCKET_NAME}' might already exist"
+
+# Check if optimized bucket was created successfully
+if aws --profile ${PROFILE_NAME} --endpoint-url=${ENDPOINT_URL} s3 ls s3://${OPTIMIZED_BUCKET_NAME} &>/dev/null; then
+    print_status "S3 bucket '${OPTIMIZED_BUCKET_NAME}' is ready"
+else
+    print_error "Failed to create or access S3 bucket '${OPTIMIZED_BUCKET_NAME}'"
 fi
 
 # Create the SQS queues

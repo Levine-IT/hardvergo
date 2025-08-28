@@ -13,14 +13,16 @@ export const IMAGE_EXTENSIONS = [
 	"avif",
 ];
 
-export const UPLOAD_TO_S3 = process.env.UPLOAD_TO_S3 === "true" || false;
+export const UPLOAD_TO_S3 = process.env.UPLOAD_TO_S3 === "true" || true;
 
 export const S3_CONFIG = {
-	region: process.env.AWS_REGION || "us-east-1",
+	region: process.env.AWS_REGION || "eu-central-1",
 	maxAttempts: 3,
 	connectionTimeout: 5000,
 	socketTimeout: 30000,
 };
+
+export const OPTIMIZED_S3_BUCKET = process.env.OPTIMIZED_S3_BUCKET || "optimized-draft-listing-images";
 
 export const IMAGE_QUALITY = {
 	webp: {

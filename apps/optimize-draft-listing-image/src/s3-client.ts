@@ -3,7 +3,7 @@ import {
 	PutObjectCommand,
 	S3Client,
 } from "@aws-sdk/client-s3";
-import { S3_CONFIG, UPLOAD_TO_S3 } from "./constants";
+import { S3_CONFIG, UPLOAD_TO_S3, OPTIMIZED_S3_BUCKET } from "./constants";
 import type { LamdbaLogger } from "./lamdba-logger";
 
 export class S3Service {
@@ -77,7 +77,7 @@ export class S3Service {
 
 		const uploadStart = Date.now();
 		const uploadCommand = new PutObjectCommand({
-			Bucket: process.env.S3_BUCKET || bucketName,
+			Bucket: OPTIMIZED_S3_BUCKET,
 			Key: key,
 			Body: buffer,
 			ContentType: contentType,
