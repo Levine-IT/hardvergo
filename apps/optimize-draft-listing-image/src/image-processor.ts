@@ -87,8 +87,8 @@ export class ImageProcessor {
 		const metadataStart = Date.now();
 
 		const metadata = await sharp(imageBuffer).metadata();
-		const originalWidth = metadata.width!;
-		const originalHeight = metadata.height!;
+		const originalWidth = metadata.width;
+		const originalHeight = metadata.height;
 		const aspectRatio = originalWidth / originalHeight;
 		const metadataDuration = Date.now() - metadataStart;
 

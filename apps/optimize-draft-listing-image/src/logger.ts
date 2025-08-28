@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: <winston has the same method definations> */
 import type winston from "winston";
 
 export abstract class BaseLogger {

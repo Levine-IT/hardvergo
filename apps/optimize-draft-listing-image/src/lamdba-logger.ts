@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
 import type { Context, SQSEvent } from "aws-lambda";
 import winston from "winston";
 import { BaseLogger } from "./logger";

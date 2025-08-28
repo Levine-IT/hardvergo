@@ -1,6 +1,6 @@
 import type { LamdbaLogger } from "./lamdba-logger";
 import { BaseLogger } from "./logger";
-import type { S3ImageOptimizationMessage } from "./types";
+import type { ImageMetadata, S3ImageOptimizationMessage } from "./types";
 
 export class ImageLogger extends BaseLogger {
 	constructor(logger: LamdbaLogger, message: S3ImageOptimizationMessage) {
@@ -18,7 +18,7 @@ export class ImageLogger extends BaseLogger {
 		});
 	}
 
-	logImageMetadata(metadata: any, duration: number): void {
+	logImageMetadata(metadata: ImageMetadata, duration: number): void {
 		this.info("Original image metadata analyzed", {
 			...metadata,
 			analysisDurationMs: duration,
