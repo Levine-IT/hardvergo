@@ -92,6 +92,14 @@ export class ListingImageService {
 				["content-length-range", 1, this.imageConfig.maxFileSizeBytes],
 				["eq", "$key", draftImage.getKey()], // Ensure exact key match
 			],
+			Fields: {
+				"x-amz-expires": (
+					this.imageConfig.objectTtlDays *
+					24 *
+					60 *
+					60
+				).toString(),
+			},
 			Expires: this.imageConfig.presignedUrlExpirationSeconds,
 		});
 
