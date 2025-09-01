@@ -8,6 +8,7 @@ import { UpdateItemDto } from "./dto/update-listing.dto";
 export class ListingsService {
 	constructor(@Inject("DB") private drizzle: NodePgDatabase<typeof schema>) {}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	create(_: CreateListingDto) {
 		return "This action adds a new item";
 	}
@@ -20,6 +21,7 @@ export class ListingsService {
 		return `This action returns a #${id} item`;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	update(id: number, _: UpdateItemDto) {
 		return `This action updates a #${id} item`;
 	}

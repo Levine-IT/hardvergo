@@ -1,4 +1,4 @@
 {
-  "recommendations": ["biomejs.biome", "lokalise.i18n-ally"],
-  "unwantedRecommendations": ["esbenp.prettier-vscode", "jackie-onai.i18next"]
+  "recommendations": ["dbaeumer.vscode-eslint", "lokalise.i18n-ally"],
+  "unwantedRecommendations": ["biomejs.biome", "esbenp.prettier-vscode", "jackie-onai.i18next"]
 }

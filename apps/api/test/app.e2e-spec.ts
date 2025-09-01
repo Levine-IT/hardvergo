@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { INestApplication } from "@nestjs/common";
 import { Test, type TestingModule } from "@nestjs/testing";
 import * as request from "supertest";
@@ -17,7 +20,7 @@ describe("AppController (e2e)", () => {
 	});
 
 	it("/ (GET)", () => {
-		// @ts-expect-error
+		// @ts-expect-error example
 		return request(app.getHttpServer())
 			.get("/")
 			.expect(200)

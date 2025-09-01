@@ -42,7 +42,10 @@ export class CategoryDto {
 	@Type(() => CategoryDto)
 	parent?: CategoryDto;
 
-	@ApiPropertyOptional({ type: [CategoryDto], description: "Child categories" })
+	@ApiPropertyOptional({
+		type: [CategoryDto],
+		description: "Child categories",
+	})
 	@IsOptional()
 	@IsArray()
 	@ValidateNested({ each: true })

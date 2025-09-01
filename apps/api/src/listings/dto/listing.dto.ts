@@ -118,7 +118,8 @@ export class MediaItemDto {
 export class GalleryDto {
 	@ApiProperty({
 		type: [MediaItemDto],
-		description: "All media items in the gallery, ordered by the 'order' field",
+		description:
+			"All media items in the gallery, ordered by the 'order' field",
 	})
 	items: MediaItemDto[];
 

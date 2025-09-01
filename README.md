@@ -68,7 +68,6 @@ hardvergo/
 │   └── frontend/     # Next.js Frontend Application
 └── packages/
     ├── typescript-config/  # Shared TypeScript configurations
-    └── biome-config/      # Shared Biome linting/formatting
 ```
 
 ### Tech Stack
@@ -90,7 +89,7 @@ hardvergo/
 #### Shared Infrastructure
 - **Language**: TypeScript 100%
 - **Package Manager**: PNPM with workspaces
-- **Code Quality**: Biome for linting and formatting
+- **Code Quality**: ESLint for linting and Prettier formatting
 - **Version Management**: Changesets for semantic versioning
 - **Git Hooks**: Lefthook for pre-commit quality checks
 
@@ -162,9 +161,9 @@ pnpm build                  # Build all apps for production
 pnpm build --filter=api     # Build backend only
 
 # Code Quality
-pnpm lint                   # Lint all packages
+pnpm lint                  # Lint all packages
 pnpm lint:fix              # Fix linting issues
-pnpm format                # Format code with Biome
+pnpm format                # Format code with Prettier
 pnpm type-check            # TypeScript type checking
 
 # Testing
@@ -195,7 +194,8 @@ The application uses a comprehensive PostgreSQL schema supporting:
 ### Code Standards
 
 - **TypeScript**: Strict mode enabled across all packages
-- **Biome**: Unified linting and formatting (replaces ESLint + Prettier)
+- **ESlint**: Linting
+- **Prettier**: Code formatting
 - **Testing**: Comprehensive test coverage with Vitest
 - **Git Hooks**: Automatic formatting and linting on commit
 - **Semantic Versioning**: Changesets for version management
@@ -238,7 +238,7 @@ Refer to `.env.example` files in each app directory for required environment var
 We welcome contributions from the community! Please read our [Contributing Guide](./CONTRIBUTING.md) for details on:
 
 - **Development Workflow**: Feature branches, pull requests, and code review
-- **Code Standards**: TypeScript, Biome configuration, and testing requirements
+- **Code Standards**: TypeScript, and testing requirements
 - **Versioning**: Semantic versioning with changesets
 - **Community Guidelines**: Code of conduct and communication standards
 
