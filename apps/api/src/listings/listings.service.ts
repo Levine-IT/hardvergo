@@ -1,32 +1,32 @@
-import { Inject, Injectable } from '@nestjs/common';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import type * as schema from '../../db/schema';
-import { CreateListingDto } from './dto/create-listing.dto';
-import { UpdateItemDto } from './dto/update-listing.dto';
+import { Inject, Injectable } from "@nestjs/common"
+import type { NodePgDatabase } from "drizzle-orm/node-postgres"
+import type * as schema from "../../db/schema"
+import { CreateListingDto } from "./dto/create-listing.dto"
+import { UpdateItemDto } from "./dto/update-listing.dto"
 
 @Injectable()
 export class ListingsService {
-  constructor(@Inject('DB') private drizzle: NodePgDatabase<typeof schema>) {}
+	constructor(@Inject("DB") private drizzle: NodePgDatabase<typeof schema>) {}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  create(_: CreateListingDto) {
-    return 'This action adds a new item';
-  }
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	create(_: CreateListingDto) {
+		return "This action adds a new item"
+	}
 
-  findAll() {
-    return `This action returns all items`;
-  }
+	findAll() {
+		return `This action returns all items`
+	}
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
-  }
+	findOne(id: number) {
+		return `This action returns a #${id} item`
+	}
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  update(id: number, _: UpdateItemDto) {
-    return `This action updates a #${id} item`;
-  }
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	update(id: number, _: UpdateItemDto) {
+		return `This action updates a #${id} item`
+	}
 
-  remove(id: number) {
-    return `This action removes a #${id} item`;
-  }
+	remove(id: number) {
+		return `This action removes a #${id} item`
+	}
 }

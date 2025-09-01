@@ -1,10 +1,10 @@
-import Heading from '@/components/ui/typography/Heading'
+import Heading from "@/components/ui/typography/Heading"
 
 const page = () => {
-  return (
-    <div>
-      <Heading level="h1">EDIT Account Details</Heading>
-    </div>
-  )
+	return (
+		<div>
+			<Heading level="h1">EDIT Account Details</Heading>
+		</div>
+	)
 }
 export default page

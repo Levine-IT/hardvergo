@@ -1,20 +1,20 @@
-import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
-import { AttributesService } from './attributes.service';
-import { SelectAttributeValueDto } from './dto/select-attribute-value.dto';
+import { Controller, Get, Param } from "@nestjs/common"
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger"
+import { AttributesService } from "./attributes.service"
+import { SelectAttributeValueDto } from "./dto/select-attribute-value.dto"
 
-@Controller('attributes')
+@Controller("attributes")
 export class AttributesController {
-  constructor(private readonly attributesService: AttributesService) {}
+	constructor(private readonly attributesService: AttributesService) {}
 
-  @Get('selectable/:key/:keyword')
-  @ApiOperation({ summary: 'Search for options' })
-  @ApiOkResponse({
-    description: 'Lists the matching attribute values, maximum 20',
-    type: [SelectAttributeValueDto],
-  })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  textSearch(@Param('key') key: string, @Param('keyword') keyword: string) {
-    return this.attributesService.findAll();
-  }
+	@Get("selectable/:key/:keyword")
+	@ApiOperation({ summary: "Search for options" })
+	@ApiOkResponse({
+		description: "Lists the matching attribute values, maximum 20",
+		type: [SelectAttributeValueDto],
+	})
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	textSearch(@Param("key") key: string, @Param("keyword") keyword: string) {
+		return this.attributesService.findAll()
+	}
 }
