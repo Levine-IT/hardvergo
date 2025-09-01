@@ -8,11 +8,13 @@
 		"build": "tsc",
 		"dev": "tsc --watch",
 		"type-check": "tsc --noEmit",
+		"db:studio": "drizzle-kit studio",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"db:push": "drizzle-kit push"
 	},
 	"dependencies": {
+		"dotenv": "^17.2.1",
 		"drizzle-orm": "^0.44.4",
 		"pg": "^8.16.3"
 	},
