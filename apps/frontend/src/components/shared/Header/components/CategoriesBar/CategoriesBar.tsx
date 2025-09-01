@@ -1,6 +1,6 @@
-import { Menu } from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const CategoriesBar = ({ className = "" }: { className?: string }) => {
 	return (
@@ -30,7 +30,7 @@ const CategoriesBar = ({ className = "" }: { className?: string }) => {
 				</Link>
 			</div>
 		</div>
-	)
-}
+	);
+};
 
-export default CategoriesBar
+export default CategoriesBar;

@@ -1,6 +1,6 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { IsArray, IsString } from "class-validator"
-import { SelectAttributeValueDto } from "src/attributes/dto/select-attribute-value.dto"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsArray, IsString } from "class-validator";
+import { SelectAttributeValueDto } from "src/attributes/dto/select-attribute-value.dto";
 
 export enum SelectAttributeType {
 	Single = "single",
@@ -12,14 +12,14 @@ export class SelectAttributeDto {
 		example: "cpu-manufacturer",
 	})
 	@IsString()
-	key: string
+	key: string;
 
 	@ApiProperty({
 		description: "Human-readable label",
 		example: "CPU Manufacturer",
 	})
 	@IsString()
-	label: string
+	label: string;
 
 	@ApiPropertyOptional({
 		type: [SelectAttributeValueDto],
@@ -28,11 +28,11 @@ export class SelectAttributeDto {
 	})
 	@IsArray()
 	@IsString({ each: true })
-	values: SelectAttributeValueDto[]
+	values: SelectAttributeValueDto[];
 
 	@ApiProperty({
 		description: "Whether this attribute is required",
 		example: true,
 	})
-	required: boolean
+	required: boolean;
 }

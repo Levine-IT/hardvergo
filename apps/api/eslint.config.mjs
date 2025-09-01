@@ -30,7 +30,7 @@ export default tseslint.config(
         'error',
         {
           trailingComma: 'all',
-					semi: false,
+					semi: true,
 					useTabs: true,
 					tabWidth: 4,
           singleQuote: false,

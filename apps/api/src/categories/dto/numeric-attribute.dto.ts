@@ -1,5 +1,5 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { IsOptional, IsString } from "class-validator"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsOptional, IsString } from "class-validator";
 
 export enum NumericAttributeType {
 	Integer = "integer",
@@ -12,39 +12,39 @@ export class NumericAttributeDto {
 		example: "vram-size",
 	})
 	@IsString()
-	key: string
+	key: string;
 
 	@ApiProperty({
 		description: "Human-readable label",
 		example: "VRAM Size (GB)",
 	})
 	@IsString()
-	label: string
+	label: string;
 
 	@ApiPropertyOptional({
 		description: "Minimum value for this attribute",
 		example: 4,
 	})
 	@IsOptional()
-	minValue?: number
+	minValue?: number;
 
 	@ApiPropertyOptional({
 		description: "Maximum value for this attribute",
 		example: 24,
 	})
 	@IsOptional()
-	maxValue?: number
+	maxValue?: number;
 
 	@ApiProperty({
 		enum: NumericAttributeType,
 		description: "Type of numeric attribute",
 		example: NumericAttributeType.Integer,
 	})
-	type: NumericAttributeType
+	type: NumericAttributeType;
 
 	@ApiProperty({
 		description: "Whether this attribute is required",
 		example: false,
 	})
-	required: boolean
+	required: boolean;
 }

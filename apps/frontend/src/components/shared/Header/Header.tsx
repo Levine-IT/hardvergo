@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { Bell, Menu, MessageCircle, Search, User } from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import CategoriesBar from "./components/CategoriesBar"
+import { Bell, Menu, MessageCircle, Search, User } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import CategoriesBar from "./components/CategoriesBar";
 
 const Header = () => {
-	const [isMobileSearchBarOpen, setIsMobileSearchBarOpen] = useState(false)
-	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+	const [isMobileSearchBarOpen, setIsMobileSearchBarOpen] = useState(false);
+	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 	return (
 		<header
@@ -141,7 +141,7 @@ const Header = () => {
 			)}
 			<CategoriesBar className="mt-2 hidden md:block" />
 		</header>
-	)
-}
+	);
+};
 
-export default Header
+export default Header;

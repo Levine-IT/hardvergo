@@ -1,8 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger"
-import { Type } from "class-transformer"
-import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator"
-import { NumericAttributeDto } from "./numeric-attribute.dto"
-import { SelectAttributeDto } from "./select-attribute.dto"
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { Type } from "class-transformer";
+import { IsArray, IsOptional, IsString, ValidateNested } from "class-validator";
+import { NumericAttributeDto } from "./numeric-attribute.dto";
+import { SelectAttributeDto } from "./select-attribute.dto";
 
 export class ListingAttributesDto {
 	@ApiProperty({
@@ -12,7 +12,7 @@ export class ListingAttributesDto {
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => NumericAttributeDto)
-	numericAttributes: NumericAttributeDto[]
+	numericAttributes: NumericAttributeDto[];
 
 	@ApiProperty({
 		type: [SelectAttributeDto],
@@ -22,7 +22,7 @@ export class ListingAttributesDto {
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => SelectAttributeDto)
-	selectAttributes: SelectAttributeDto[]
+	selectAttributes: SelectAttributeDto[];
 }
 
 export class CategoryDto {
@@ -30,17 +30,17 @@ export class CategoryDto {
 		description: "URL-friendly unique identifier for the category",
 		example: "electronics",
 	})
-	key: string
+	key: string;
 
 	@ApiProperty({ description: "Category name", example: "Electronics" })
 	@IsString()
-	name: string
+	name: string;
 
 	@ApiPropertyOptional({ type: CategoryDto, description: "Parent category" })
 	@IsOptional()
 	@ValidateNested()
 	@Type(() => CategoryDto)
-	parent?: CategoryDto
+	parent?: CategoryDto;
 
 	@ApiPropertyOptional({
 		type: [CategoryDto],
@@ -50,11 +50,11 @@ export class CategoryDto {
 	@IsArray()
 	@ValidateNested({ each: true })
 	@Type(() => CategoryDto)
-	children?: CategoryDto[]
+	children?: CategoryDto[];
 
 	@ApiProperty({
 		type: ListingAttributesDto,
 		description: "Attributes for listings in this category",
 	})
-	listingAttributes: ListingAttributesDto
+	listingAttributes: ListingAttributesDto;
 }

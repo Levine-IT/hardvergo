@@ -1,4 +1,4 @@
-import Heading from "@/components/ui/typography/Heading"
+import Heading from "@/components/ui/typography/Heading";
 
 export default function Home() {
 	return (
@@ -13,5 +13,5 @@ export default function Home() {
 				CATEGORIES... AGAIN
 			</Heading>
 		</div>
-	)
+	);
 }

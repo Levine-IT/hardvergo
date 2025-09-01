@@ -1,7 +1,7 @@
-import { Controller, Get, Param } from "@nestjs/common"
-import { ApiOkResponse, ApiOperation } from "@nestjs/swagger"
-import { AttributesService } from "./attributes.service"
-import { SelectAttributeValueDto } from "./dto/select-attribute-value.dto"
+import { Controller, Get, Param } from "@nestjs/common";
+import { ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { AttributesService } from "./attributes.service";
+import { SelectAttributeValueDto } from "./dto/select-attribute-value.dto";
 
 @Controller("attributes")
 export class AttributesController {
@@ -15,6 +15,6 @@ export class AttributesController {
 	})
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	textSearch(@Param("key") key: string, @Param("keyword") keyword: string) {
-		return this.attributesService.findAll()
+		return this.attributesService.findAll();
 	}
 }

@@ -1,5 +1,5 @@
-import type { Preview } from "@storybook/nextjs-vite"
-import "../src/app/globals.css" // or wherever your Tailwind CSS is
+import type { Preview } from "@storybook/nextjs-vite";
+import "../src/app/globals.css"; // or wherever your Tailwind CSS is
 
 const preview: Preview = {
 	parameters: {
@@ -17,6 +17,6 @@ const preview: Preview = {
 			test: "todo",
 		},
 	},
-}
+};
 
-export default preview
+export default preview;
