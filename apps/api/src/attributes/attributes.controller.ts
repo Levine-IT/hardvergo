@@ -13,6 +13,7 @@ export class AttributesController {
 		description: "Lists the matching attribute values, maximum 20",
 		type: [SelectAttributeValueDto],
 	})
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	textSearch(@Param("key") key: string, @Param("keyword") keyword: string) {
 		return this.attributesService.findAll();
 	}

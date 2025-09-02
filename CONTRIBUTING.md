@@ -4,8 +4,8 @@ Please also read the [README.md](./README.md) before contributing to this reposi
 
 ## Recommendations
 - Use [VSCode](https://code.visualstudio.com/) as your editor.
-- Install the [Biome](https://marketplace.visualstudio.com/items?itemName=biomejs.biome) extension for VSCode.
-- Disable ESlint and Prettier for the workspace on their extensions page.
+- Install the [ESlint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) extension for VSCode.
+- Disable Biome and Prettier for the workspace on their extensions page.
 - Look up the SemVer versioning scheme and follow it.
 
 ## Git(Hub) Workflow
@@ -15,7 +15,7 @@ Please also read the [README.md](./README.md) before contributing to this reposi
 4. Install dependencies with `pnpm install`.
 5. Run `pnpm test` to run the tests.
 6. Make and commit your changes.
-    - Making a commit will trigger a pre-commit hook that will run Biome formatting and linting. If there are any errors, you will need to fix them before you can commit.
+    - Making a commit will trigger a pre-commit hook that will run Prettier formatting and ESlint linting. If there are any errors, you will need to fix them before you can commit.
 7. Run `pnpm changeset` to create a changeset for your changes.
     - This will create a file in the `.changeset` directory that will be used to generate a changelog and bump the version when you merge your changes.
     - Make sure to select the correct type of change (major, minor, patch) and write a description of the change.

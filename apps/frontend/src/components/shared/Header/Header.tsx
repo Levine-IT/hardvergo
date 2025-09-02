@@ -13,28 +13,30 @@ const Header = () => {
 
 	return (
 		<header
-			className="w-full px-4 py-2 flex flex-col items-center justify-items-center"
+			className="flex w-full flex-col items-center justify-items-center px-4 py-2"
 			data-testid="header"
 		>
-			<div className="flex flex-row items-center w-full max-w-7xl">
+			<div className="flex w-full max-w-7xl flex-row items-center">
 				<div className="flex">
 					<Link href="/">
-						<span className="text-xl font-bold bg-gradient-to-r from-primary to-stone-600 bg-clip-text text-transparent">
+						<span className="from-primary bg-gradient-to-r to-stone-600 bg-clip-text text-xl font-bold text-transparent">
 							HardverGo
 						</span>
 					</Link>
 				</div>
-				<div className="md:flex-1 flex flex-row ml-auto md:ml-4 lg:ml-8">
+				<div className="ml-auto flex flex-row md:ml-4 md:flex-1 lg:ml-8">
 					<Button
 						variant="outline"
 						className="md:hidden"
 						size="icon"
-						onClick={() => setIsMobileSearchBarOpen(!isMobileSearchBarOpen)}
+						onClick={() =>
+							setIsMobileSearchBarOpen(!isMobileSearchBarOpen)
+						}
 					>
 						<Search className="h-16" />
 					</Button>
 
-					<div className="hidden md:flex flex-row items-center flex-1">
+					<div className="hidden flex-1 flex-row items-center md:flex">
 						<Input
 							type="search"
 							placeholder="Search for electronics, fashion, home & garden..."
@@ -46,7 +48,7 @@ const Header = () => {
 					</div>
 				</div>
 
-				<div className="hidden flex-row ml-auto md:flex">
+				<div className="ml-auto hidden flex-row md:flex">
 					<Button
 						variant="ghost"
 						className="md:flex md:items-center"
@@ -57,7 +59,7 @@ const Header = () => {
 					</Button>
 					<Button
 						variant="ghost"
-						className="md:flex md:items-center ml-2 lg:ml-3 xl:ml-4"
+						className="ml-2 md:flex md:items-center lg:ml-3 xl:ml-4"
 						aria-label="Alerts"
 					>
 						<Bell className="mr-2" />
@@ -65,7 +67,7 @@ const Header = () => {
 					</Button>
 					<Button
 						variant="outline"
-						className="md:flex md:items-center ml-2 lg:ml-3 xl:ml-4"
+						className="ml-2 md:flex md:items-center lg:ml-3 xl:ml-4"
 						aria-label="Sign In"
 					>
 						<User className="md:mr-2" />
@@ -73,7 +75,7 @@ const Header = () => {
 					</Button>
 					<Button
 						variant="default"
-						className="md:flex md:items-center ml-2 lg:ml-3 xl:ml-4"
+						className="ml-2 md:flex md:items-center lg:ml-3 xl:ml-4"
 						aria-label="Sell Item"
 					>
 						<span className="md:inline">Sell Item</span>
@@ -83,23 +85,27 @@ const Header = () => {
 				<Button
 					variant="ghost"
 					size="default"
-					className="flex ml-2 md:hidden"
+					className="ml-2 flex md:hidden"
 					onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
 				>
-					<Menu className="w-8 h-8" />
+					<Menu className="h-8 w-8" />
 				</Button>
 			</div>
 			{(isMobileSearchBarOpen || isMobileMenuOpen) && (
-				<div className="flex items-center gap-x-2 w-full mt-3 md:hidden">
-					<Input type="search" placeholder="Search..." className="w-full" />
+				<div className="mt-3 flex w-full items-center gap-x-2 md:hidden">
+					<Input
+						type="search"
+						placeholder="Search..."
+						className="w-full"
+					/>
 					<Button type="button" variant="default">
 						Search
 					</Button>
 				</div>
 			)}
 			{isMobileMenuOpen && (
-				<div className="md:hidden w-full">
-					<div className="flex flex-row items-center w-full mt-3">
+				<div className="w-full md:hidden">
+					<div className="mt-3 flex w-full flex-row items-center">
 						<Button variant="outline" className="w-1/2">
 							<User className="mr-2" />
 							<span>Sign In</span>
@@ -108,26 +114,26 @@ const Header = () => {
 							<span>Sell Item</span>
 						</Button>
 					</div>
-					<div className="w-full mt-3 flex flex-col items-center">
-						<Link href="#" className="w-full mb-2 text-left">
+					<div className="mt-3 flex w-full flex-col items-center">
+						<Link href="#" className="mb-2 w-full text-left">
 							<span className="font-bold">All Categories</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Electronics</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Fashion</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Home & Garden</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Sports & Outdoors</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Toys & Hobbies</span>
 						</Link>
-						<Link href="#" className="w-full mb-2">
+						<Link href="#" className="mb-2 w-full">
 							<span>Automotive</span>
 						</Link>
 					</div>
