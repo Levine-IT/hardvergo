@@ -71,7 +71,8 @@ export class ListingImageService {
 				fields: {
 					bucket: presignedPost.fields.bucket,
 					"X-Amz-Algorithm": presignedPost.fields["X-Amz-Algorithm"],
-					"X-Amz-Credential": presignedPost.fields["X-Amz-Credential"],
+					"X-Amz-Credential":
+						presignedPost.fields["X-Amz-Credential"],
 					"X-Amz-Date": presignedPost.fields["X-Amz-Date"],
 					key: presignedPost.fields.key,
 					Policy: presignedPost.fields.Policy,

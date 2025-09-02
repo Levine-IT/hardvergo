@@ -50,7 +50,7 @@ export class UserListingsController {
 	@ApiOkResponse({
 		type: DraftListingDto,
 	})
-	async getDraft() {
+	getDraft() {
 		return {};
 	}
 
@@ -86,9 +86,9 @@ export class UserListingsController {
 		description: "Temporary image deleted successfully",
 		type: DraftImageDeleteResponseDto,
 	})
-	async deleteTempImage(
+	deleteTempImage(
 		@Param("tempKey") tempKey: string,
-	): Promise<DraftImageDeleteResponseDto> {
+	): DraftImageDeleteResponseDto {
 		// Decode the temp key since it comes from URL params
 		const decodedTempKey = decodeURIComponent(tempKey);
 		// await this.s3Service.deleteDraftImage(decodedTempKey);

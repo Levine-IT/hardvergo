@@ -12,7 +12,13 @@ export class CreateDraftImageUploadDto {
 	@ApiProperty({
 		description: "The MIME type of the image",
 		example: "image/jpeg",
-		enum: ["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"],
+		enum: [
+			"image/jpeg",
+			"image/jpg",
+			"image/png",
+			"image/gif",
+			"image/webp",
+		],
 	})
 	@IsString()
 	@IsIn(["image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp"])
@@ -67,7 +73,8 @@ export class S3PresignedPostFieldsDto {
 
 	@ApiProperty({
 		description: "AWS signature for authenticating the request",
-		example: "850314aa8200b996cd3d42d141998358b21d810188e0caa4e0155b0666e67a84",
+		example:
+			"850314aa8200b996cd3d42d141998358b21d810188e0caa4e0155b0666e67a84",
 	})
 	@IsString()
 	"X-Amz-Signature": string;

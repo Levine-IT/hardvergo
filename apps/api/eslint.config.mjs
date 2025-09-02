@@ -37,7 +37,6 @@ export default tseslint.config(
           printWidth: 80,
           endOfLine: 'auto',
           arrowParens: 'always',
-          plugins: ['prettier-plugin-tailwindcss'],
         },
         {
           usePrettierrc: false,
