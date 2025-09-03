@@ -94,23 +94,6 @@ services:
     networks:
       - app-network
 
-
-  drizzle-studio:
-    image: node:22-alpine
-    container_name: drizzle-studio
-    working_dir: /app
-    ports:
-      - "4983:4983"
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/postgres
-    volumes:
-      - "./packages/database:/app"
-    command: sh -c "npm install -g drizzle-kit && npx drizzle-kit studio --port 4983 --host 0.0.0.0"
-    depends_on:
-      - postgres
-    networks:
-      - app-network
-
 networks:
   app-network:
     driver: bridge
