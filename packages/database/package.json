@@ -1,6 +1,6 @@
 {
 	"name": "@hardvergo/database",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "Shared database package for HardverGO",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",

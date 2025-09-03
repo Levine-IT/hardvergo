@@ -1,6 +1,6 @@
 {
 	"name": "optimize-draft-listing-image",
-	"version": "1.0.0",
+	"version": "0.1.0",
 	"description": "AWS Lambda function to optimize draft listing images triggered by SQS",
 	"main": "dist/index.js",
 	"scripts": {
