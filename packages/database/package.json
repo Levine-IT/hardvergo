@@ -14,13 +14,13 @@
 		"db:push": "drizzle-kit push"
 	},
 	"dependencies": {
-		"dotenv": "^17.2.1",
 		"drizzle-orm": "^0.44.4",
 		"pg": "^8.16.3"
 	},
 	"devDependencies": {
 		"@types/node": "^22.0.0",
 		"@types/pg": "^8.15.5",
+		"dotenv": "^17.2.1",
 		"drizzle-kit": "^0.31.4",
 		"typescript": "^5.7.3"
 	},
