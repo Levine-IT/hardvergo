@@ -30,7 +30,7 @@ export class EventParser {
 		this.logger.debug("Raw Body", record.body);
 
 		try {
-			const messageBody = JSON.parse(record.body);
+			const messageBody: unknown = JSON.parse(record.body);
 
 			if (this.isS3TestEvent(messageBody)) {
 				this.logger.info("🧪 Ignoring S3 test event gracefully");
@@ -38,11 +38,13 @@ export class EventParser {
 			}
 
 			if (!this.isValidS3Event(messageBody)) {
-				this.logger.info("⚠️ Skipping message - not a valid S3Event structure");
+				this.logger.info(
+					"⚠️ Skipping message - not a valid S3Event structure",
+				);
 				return null;
 			}
 
-			const s3Event: S3Event = messageBody;
+			const s3Event: S3Event = messageBody as S3Event;
 			this.logger.info("Parsed S3 event successfully", {
 				recordsCount: s3Event.Records.length,
 			});
@@ -76,7 +78,9 @@ export class EventParser {
 			}
 
 			if (!this.isImageFile(s3Record.s3.object.key)) {
-				this.logger.info(`Skipping non-image file: ${s3Record.s3.object.key}`);
+				this.logger.info(
+					`Skipping non-image file: ${s3Record.s3.object.key}`,
+				);
 				continue;
 			}
 
@@ -90,15 +94,26 @@ export class EventParser {
 		return optimizationMessages;
 	}
 
-	private isS3TestEvent(messageBody: any): boolean {
+	private isS3TestEvent(messageBody: unknown): boolean {
 		return (
-			messageBody.Service === "Amazon S3" &&
-			messageBody.Event === "s3:TestEvent"
+			typeof messageBody === "object" &&
+			messageBody !== null &&
+			"Service" in messageBody &&
+			"Event" in messageBody &&
+			(messageBody as { Service: unknown; Event: unknown }).Service ===
+				"Amazon S3" &&
+			(messageBody as { Service: unknown; Event: unknown }).Event ===
+				"s3:TestEvent"
 		);
 	}
 
-	private isValidS3Event(messageBody: any): boolean {
-		return messageBody.Records && Array.isArray(messageBody.Records);
+	private isValidS3Event(messageBody: unknown): boolean {
+		return (
+			typeof messageBody === "object" &&
+			messageBody !== null &&
+			"Records" in messageBody &&
+			Array.isArray((messageBody as { Records: unknown }).Records)
+		);
 	}
 
 	private isObjectCreatedEvent(eventName: string): boolean {

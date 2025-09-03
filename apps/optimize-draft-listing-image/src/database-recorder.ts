@@ -27,9 +27,12 @@ export class DatabaseRecorder {
 		}
 
 		try {
-			this.logger.info("Testing database connection and recording variant", {
-				optimizedS3Key,
-			});
+			this.logger.info(
+				"Testing database connection and recording variant",
+				{
+					optimizedS3Key,
+				},
+			);
 
 			const userCount = await this.db.query.users.findMany({ limit: 1 });
 			this.logger.info("Database connection successful", {

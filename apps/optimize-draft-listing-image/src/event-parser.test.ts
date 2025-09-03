@@ -18,11 +18,18 @@ describe("EventParser", () => {
 
 	beforeEach(() => {
 		mockLogger = {
+			logLambdaStart: jest.fn(),
+			logLambdaEnd: jest.fn(),
 			logRecordStart: jest.fn(),
+			logS3Event: jest.fn(),
+			logDownloadStart: jest.fn(),
+			logDownloadComplete: jest.fn(),
 			info: jest.fn(),
 			debug: jest.fn(),
 			error: jest.fn(),
-		} as any;
+			warn: jest.fn(),
+			child: jest.fn(),
+		} as unknown as jest.Mocked<LamdbaLogger>;
 		eventParser = new EventParser(mockLogger);
 	});
 
@@ -54,7 +61,11 @@ describe("EventParser", () => {
 				awsRegion: "eu-central-1",
 			};
 
-			const result = eventParser.parseAndValidateSQSRecord(sqsRecord, 0, 1);
+			const result = eventParser.parseAndValidateSQSRecord(
+				sqsRecord,
+				0,
+				1,
+			);
 
 			expect(result).toBeNull();
 			expect(mockLogger.logRecordStart).toHaveBeenCalledWith(
@@ -62,7 +73,10 @@ describe("EventParser", () => {
 				1,
 				"8c1237ae-8ab7-49f4-a95d-92a41ded40b8",
 			);
-			expect(mockLogger.info).toHaveBeenCalledWith("Event Source", "aws:sqs");
+			expect(mockLogger.info).toHaveBeenCalledWith(
+				"Event Source",
+				"aws:sqs",
+			);
 			expect(mockLogger.info).toHaveBeenCalledWith(
 				"Event Source ARN",
 				"arn:aws:sqs:eu-central-1:000000000000:optimize-draft-images",
@@ -125,7 +139,11 @@ describe("EventParser", () => {
 				awsRegion: "us-east-1",
 			};
 
-			const result = eventParser.parseAndValidateSQSRecord(sqsRecord, 0, 1);
+			const result = eventParser.parseAndValidateSQSRecord(
+				sqsRecord,
+				0,
+				1,
+			);
 
 			expect(result).toEqual(s3Event);
 			expect(mockLogger.info).toHaveBeenCalledWith(
@@ -155,7 +173,11 @@ describe("EventParser", () => {
 				awsRegion: "us-east-1",
 			};
 
-			const result = eventParser.parseAndValidateSQSRecord(sqsRecord, 0, 1);
+			const result = eventParser.parseAndValidateSQSRecord(
+				sqsRecord,
+				0,
+				1,
+			);
 
 			expect(result).toBeNull();
 			expect(mockLogger.info).toHaveBeenCalledWith(
@@ -184,7 +206,9 @@ describe("EventParser", () => {
 				"Failed to parse SQS record body",
 				{
 					messageId: "test-message-id",
-					error: expect.stringContaining("Unexpected token"),
+					error: expect.stringContaining(
+						"Unexpected token",
+					) as string,
 				},
 			);
 		});

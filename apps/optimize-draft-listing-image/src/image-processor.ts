@@ -54,7 +54,11 @@ export class ImageProcessor {
 			this.logger.logProcessingStart(totalVariants);
 
 			const processingStart = Date.now();
-			await this.processImageVariants(imageBuffer, responsiveSizes, message);
+			await this.processImageVariants(
+				imageBuffer,
+				responsiveSizes,
+				message,
+			);
 			const processingDuration = Date.now() - processingStart;
 
 			const totalDuration = Date.now() - optimizationStart;
@@ -72,7 +76,8 @@ export class ImageProcessor {
 				{
 					bucketName: message.bucketName,
 					objectKey: message.objectKey,
-					error: error instanceof Error ? error.message : String(error),
+					error:
+						error instanceof Error ? error.message : String(error),
 					stack: error instanceof Error ? error.stack : undefined,
 				},
 			);
@@ -137,7 +142,9 @@ export class ImageProcessor {
 				}
 			}
 
-			this.logger.info(`📤 Starting ${uploadTasks.length} parallel uploads`);
+			this.logger.info(
+				`📤 Starting ${uploadTasks.length} parallel uploads`,
+			);
 			await Promise.all(uploadTasks);
 		} finally {
 			baseSharp.destroy();
@@ -210,7 +217,8 @@ export class ImageProcessor {
 			this.logger.error(
 				`Error processing ${format} variant for ${size.name} (after ${totalVariantDuration}ms)`,
 				{
-					error: error instanceof Error ? error.message : String(error),
+					error:
+						error instanceof Error ? error.message : String(error),
 					dimensions: { width: size.width, height: size.height },
 					format,
 					sizeName: size.name,
@@ -237,19 +245,25 @@ export class ImageProcessor {
 		switch (format) {
 			case "webp":
 				return {
-					buffer: await resizedSharp.webp(IMAGE_QUALITY.webp).toBuffer(),
+					buffer: await resizedSharp
+						.webp(IMAGE_QUALITY.webp)
+						.toBuffer(),
 					contentType: "image/webp",
 					fileExtension: "webp",
 				};
 			case "avif":
 				return {
-					buffer: await resizedSharp.avif(IMAGE_QUALITY.avif).toBuffer(),
+					buffer: await resizedSharp
+						.avif(IMAGE_QUALITY.avif)
+						.toBuffer(),
 					contentType: "image/avif",
 					fileExtension: "avif",
 				};
 			case "jpeg":
 				return {
-					buffer: await resizedSharp.jpeg(IMAGE_QUALITY.jpeg).toBuffer(),
+					buffer: await resizedSharp
+						.jpeg(IMAGE_QUALITY.jpeg)
+						.toBuffer(),
 					contentType: "image/jpeg",
 					fileExtension: "jpg",
 				};

@@ -22,7 +22,10 @@ export class S3Service {
 		});
 	}
 
-	async downloadImage(bucketName: string, objectKey: string): Promise<Buffer> {
+	async downloadImage(
+		bucketName: string,
+		objectKey: string,
+	): Promise<Buffer> {
 		this.logger.logDownloadStart(bucketName, objectKey);
 		const downloadStart = Date.now();
 

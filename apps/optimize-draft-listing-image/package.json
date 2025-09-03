@@ -8,10 +8,15 @@
 		"build:tsc": "tsc",
 		"start": "node dist/index.js",
 		"dev": "node build.js --watch",
-		"format": "biome format --write",
-		"test": "jest",
+		"check": "pnpm lint:fix && pnpm format",
+		"lint": "eslint \"src/**/*.ts\"",
+		"lint:fix": "eslint \"src/**/*.ts\" --fix",
+		"format": "eslint \"src/**/*.ts\" --fix",
+		"test": "jest --passWithNoTests",
 		"test:watch": "jest --watch",
-		"test:coverage": "jest --coverage"
+		"test:cov": "jest --coverage",
+		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+		"type-check": "tsc --noEmit"
 	},
 	"dependencies": {
 		"@aws-sdk/client-s3": "^3.0.0",
@@ -23,13 +28,23 @@
 		"winston": "^3.17.0"
 	},
 	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.1",
+		"@eslint/js": "^9.31.0",
 		"@types/aws-lambda": "^8.10.0",
 		"@types/jest": "^30.0.0",
-		"@types/node": "^22.0.0",
+		"@types/node": "^22.10.7",
 		"esbuild": "^0.25.9",
+		"eslint": "^9.34.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.4",
+		"globals": "^16.0.0",
 		"jest": "^30.0.5",
+		"prettier": "^3.6.2",
 		"ts-jest": "^29.4.0",
-		"typescript": "^5.0.0"
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.7.3",
+		"typescript-eslint": "^8.37.0"
 	},
 	"engines": {
 		"node": ">=22.0.0"

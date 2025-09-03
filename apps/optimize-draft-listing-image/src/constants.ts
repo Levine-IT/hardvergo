@@ -22,7 +22,8 @@ export const S3_CONFIG = {
 	socketTimeout: 30000,
 };
 
-export const OPTIMIZED_S3_BUCKET = process.env.OPTIMIZED_S3_BUCKET || "optimized-draft-listing-images";
+export const OPTIMIZED_S3_BUCKET =
+	process.env.OPTIMIZED_S3_BUCKET || "optimized-draft-listing-images";
 
 export const IMAGE_QUALITY = {
 	webp: {
