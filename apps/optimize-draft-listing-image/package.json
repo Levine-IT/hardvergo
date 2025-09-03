@@ -7,7 +7,7 @@
 		"build": "node build.js",
 		"build:tsc": "tsc",
 		"start": "node dist/index.js",
-		"dev": "node build.js && npm run start",
+		"dev": "node build.js --watch",
 		"format": "biome format --write",
 		"test": "jest",
 		"test:watch": "jest --watch",
