@@ -27,7 +27,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build dependencies
-        run: pnpm build:deps
+        run: pnpm build
       
       - name: Run ${{ matrix.check }}
         run: pnpm ${{ matrix.check }}
