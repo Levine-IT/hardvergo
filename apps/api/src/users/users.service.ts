@@ -14,7 +14,7 @@ export class UsersService {
 	}
 
 	findAll() {
-		return this.drizzle.query.users.findMany();
+		return `This action returns all user`;
 	}
 
 	findOne(id: number) {
