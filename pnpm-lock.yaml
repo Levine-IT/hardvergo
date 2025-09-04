@@ -298,9 +298,6 @@ importers:
       '@hardvergo/database':
         specifier: workspace:*
         version: link:../../packages/database
-      '@types/winston':
-        specifier: ^2.4.4
-        version: 2.4.4
       aws-lambda:
         specifier: ^1.0.7
         version: 1.0.7
@@ -2976,10 +2973,6 @@ packages:
 
   '@types/validator@13.15.2':
     resolution: {integrity: sha512-y7pa/oEJJ4iGYBxOpfAKn5b9+xuihvzDVnC/OSvlVnGxVg0pOqmjiMafiJ1KVNQEaPZf9HsEp5icEwGg8uIe5Q==}
-
-  '@types/winston@2.4.4':
-    resolution: {integrity: sha512-BVGCztsypW8EYwJ+Hq+QNYiT/MUyCif0ouBH+flrY66O5W+KIXAMML6E/0fJpm7VjIzgangahl5S03bJJQGrZw==}
-    deprecated: This is a stub types definition. winston provides its own type definitions, so you do not need this installed.
 
   '@types/yargs-parser@21.0.3':
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -10406,10 +10399,6 @@ snapshots:
   '@types/uuid@9.0.8': {}
 
   '@types/validator@13.15.2': {}
-
-  '@types/winston@2.4.4':
-    dependencies:
-      winston: 3.17.0
 
   '@types/yargs-parser@21.0.3': {}
 
