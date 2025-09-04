@@ -1,0 +1,59 @@
+{
+	"name": "optimize-draft-listing-image",
+	"version": "0.1.0",
+	"description": "AWS Lambda function to optimize draft listing images triggered by SQS",
+	"main": "dist/index.js",
+	"scripts": {
+		"build": "ts-node scripts/build.ts",
+		"build:tsc": "tsc",
+		"start": "node dist/index.js",
+		"dev": "ts-node scripts/build.ts --watch",
+		"check": "pnpm lint:fix && pnpm format",
+		"lint": "eslint \"src/**/*.ts\"",
+		"lint:fix": "eslint \"src/**/*.ts\" --fix",
+		"format": "eslint \"src/**/*.ts\" --fix",
+		"test": "jest --passWithNoTests",
+		"test:watch": "jest --watch",
+		"test:cov": "jest --coverage",
+		"test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
+		"type-check": "tsc --noEmit"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "^3.0.0",
+		"@aws-sdk/client-sqs": "^3.0.0",
+		"@hardvergo/database": "workspace:*",
+		"aws-lambda": "^1.0.7",
+		"sharp": "^0.34.3",
+		"winston": "^3.17.0"
+	},
+	"devDependencies": {
+		"@eslint/eslintrc": "^3.3.1",
+		"@eslint/js": "^9.31.0",
+		"@types/aws-lambda": "^8.10.0",
+		"@types/jest": "^30.0.0",
+		"@types/node": "^22.10.7",
+		"esbuild": "^0.25.9",
+		"eslint": "^9.34.0",
+		"eslint-config-prettier": "^10.1.8",
+		"eslint-plugin-prettier": "^5.5.4",
+		"globals": "^16.0.0",
+		"jest": "^30.0.5",
+		"prettier": "^3.6.2",
+		"ts-jest": "^29.4.0",
+		"ts-node": "^10.9.2",
+		"tsconfig-paths": "^4.2.0",
+		"typescript": "^5.7.3",
+		"typescript-eslint": "^8.37.0"
+	},
+	"engines": {
+		"node": ">=22.0.0"
+	},
+	"keywords": [
+		"aws",
+		"lambda",
+		"sqs",
+		"image-optimization"
+	],
+	"author": "",
+	"license": "ISC"
+}

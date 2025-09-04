@@ -1,6 +1,6 @@
+import type * as schema from "@hardvergo/database/schema";
 import { Inject, Injectable } from "@nestjs/common";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
-import type * as schema from "../../db/schema";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 
@@ -14,7 +14,7 @@ export class UsersService {
 	}
 
 	findAll() {
-		return this.drizzle.query.users.findMany();
+		return `This action returns all user`;
 	}
 
 	findOne(id: number) {

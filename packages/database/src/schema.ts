@@ -7,6 +7,7 @@ import {
 	real,
 	text,
 	timestamp,
+	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
 
@@ -52,32 +53,31 @@ export const orderStatusEnum = pgEnum("order_status", [
 
 // Users table
 export const users = pgTable("users", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid().primaryKey(),
 	username: varchar({ length: 255 }).notNull(),
 	email: varchar({ length: 255 }).notNull().unique(),
-	passwordHash: text("password_hash"),
 	bio: varchar({ length: 500 }).notNull().default(""),
 	role: userRoleEnum("role").notNull().default("user"),
 	rank: rankingEnum("ranking").notNull().default("newbie"),
-	profilePictureUrl: text("profile_picture_url"),
+	profilePictureId: text("profile_picture_id"),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Categories table
 export const categories = pgTable("categories", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid().primaryKey(),
 	key: varchar({ length: 255 }).notNull().unique(),
 	name: varchar({ length: 255 }).notNull(),
-	parentId: integer("parent_id").references(() => categories.id),
+	parentId: uuid("parent_id").references(() => categories.id),
 	createdAt: timestamp("created_at").notNull().defaultNow(),
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // Attributes table
 export const attributes = pgTable("attributes", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	categoryId: integer("category_id")
+	id: uuid().primaryKey(),
+	categoryId: uuid("category_id")
 		.notNull()
 		.references(() => categories.id),
 	key: varchar({ length: 255 }).notNull(),
@@ -96,8 +96,8 @@ export const attributes = pgTable("attributes", {
 
 // Select attribute values table
 export const selectAttributeValues = pgTable("select_attribute_values", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	attributeId: integer("attribute_id")
+	id: uuid().primaryKey(),
+	attributeId: uuid("attribute_id")
 		.notNull()
 		.references(() => attributes.id),
 	key: varchar({ length: 255 }).notNull(),
@@ -108,15 +108,15 @@ export const selectAttributeValues = pgTable("select_attribute_values", {
 
 // Listings table
 export const listings = pgTable("listings", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid().primaryKey(),
 	title: varchar({ length: 255 }).notNull(),
 	description: text().notNull(),
 	status: status("status").notNull().default("active"),
 	price: integer().notNull(),
-	sellerId: integer("seller_id")
+	sellerId: uuid("seller_id")
 		.notNull()
 		.references(() => users.id),
-	categoryId: integer("category_id")
+	categoryId: uuid("category_id")
 		.notNull()
 		.references(() => categories.id),
 	attributes: json("attributes").$type<Record<string, unknown>>(), // Category-specific attributes
@@ -126,16 +126,34 @@ export const listings = pgTable("listings", {
 	updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// Orders table
-export const orders = pgTable("orders", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	listingId: integer("listing_id")
-		.notNull()
-		.references(() => listings.id),
-	buyerId: integer("buyer_id")
+// Draft listings table
+export const draftListings = pgTable("draft_listings", {
+	userId: uuid("user_id")
+		.primaryKey()
+		.references(() => users.id),
+	state: varchar({ length: 1024 }).notNull(), // Serialized stateform
+	createdAt: timestamp("created_at").notNull().defaultNow(),
+	updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// Draft listings media table
+export const draftListingsMedia = pgTable("draft_listings_media", {
+	id: uuid().primaryKey(), // This id will be used as the media name in S3 to store it
+	userId: uuid("user_id")
 		.notNull()
 		.references(() => users.id),
-	sellerId: integer("seller_id")
+});
+
+// Orders table
+export const orders = pgTable("orders", {
+	id: uuid().primaryKey(),
+	listingId: uuid("listing_id")
+		.notNull()
+		.references(() => listings.id),
+	buyerId: uuid("buyer_id")
+		.notNull()
+		.references(() => users.id),
+	sellerId: uuid("seller_id")
 		.notNull()
 		.references(() => users.id),
 	status: orderStatusEnum("status").notNull().default("pending"),
@@ -153,7 +171,7 @@ export const orders = pgTable("orders", {
 // Media items table
 export const mediaItems = pgTable("media_items", {
 	id: varchar({ length: 255 }).primaryKey(), // Custom ID like "media_abc123def456"
-	listingId: integer("listing_id")
+	listingId: uuid("listing_id")
 		.notNull()
 		.references(() => listings.id),
 	filename: varchar({ length: 255 }).notNull(),
@@ -170,7 +188,7 @@ export const mediaItems = pgTable("media_items", {
 
 // Image variants table (for different sizes/formats of the same image)
 export const imageVariants = pgTable("image_variants", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
+	id: uuid().primaryKey(),
 	mediaItemId: varchar("media_item_id", { length: 255 })
 		.notNull()
 		.references(() => mediaItems.id),
@@ -183,11 +201,11 @@ export const imageVariants = pgTable("image_variants", {
 
 // User ratings table (to support averageRating and ratingCount in UserDto)
 export const userRatings = pgTable("user_ratings", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	raterId: integer("rater_id")
+	id: uuid().primaryKey(),
+	raterId: uuid("rater_id")
 		.notNull()
 		.references(() => users.id),
-	ratedUserId: integer("rated_user_id")
+	ratedUserId: uuid("rated_user_id")
 		.notNull()
 		.references(() => users.id),
 	rating: integer().notNull(), // 1-5 rating
@@ -198,8 +216,8 @@ export const userRatings = pgTable("user_ratings", {
 
 // User activity table (to track lastActivity in UserDto)
 export const userActivity = pgTable("user_activity", {
-	id: integer().primaryKey().generatedAlwaysAsIdentity(),
-	userId: integer("user_id")
+	id: uuid().primaryKey(),
+	userId: uuid("user_id")
 		.notNull()
 		.references(() => users.id),
 	activityType: varchar("activity_type", { length: 100 }).notNull(), // login, listing_created, etc.
