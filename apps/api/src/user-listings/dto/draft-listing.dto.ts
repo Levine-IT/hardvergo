@@ -1,17 +1,31 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsJSON, IsString, MaxLength } from "class-validator";
+import {
+	ArrayNotEmpty,
+	IsArray,
+	IsJSON,
+	IsString,
+	IsUrl,
+	MaxLength,
+} from "class-validator";
 
 export class DraftImageDto {
 	@ApiProperty({
 		description: "The URL of the original image",
 		example: "https://example.com/images/draft_laptop.webp",
 	})
+	@IsUrl()
 	sourceUrl: string;
 
 	@ApiProperty({
-		description: "The URL of the optimized image",
-		example: "https://example.com/images/draft_laptop_optimized.webp",
+		description: "URLs of the optimized images",
+		example: [
+			"https://example.com/images/draft_laptop_optimized.webp",
+			"https://example.com/images/draft_laptop_optimized.avif",
+		],
 	})
+	@IsArray()
+	@ArrayNotEmpty()
+	@IsUrl({}, { each: true })
 	optimizedUrls: string[];
 }
 
@@ -20,6 +34,7 @@ export class DraftListingDto {
 		description: "ID of the user who owns the draft listing",
 		example: "mhvXdrZT4jP5T8vBxuvm75",
 	})
+	@IsString()
 	userId: string;
 
 	@IsString()
