@@ -4,10 +4,10 @@
 	"description": "AWS Lambda function to optimize draft listing images triggered by SQS",
 	"main": "dist/index.js",
 	"scripts": {
-		"build": "node build.js",
+		"build": "ts-node scripts/build.ts",
 		"build:tsc": "tsc",
 		"start": "node dist/index.js",
-		"dev": "node build.js --watch",
+		"dev": "ts-node scripts/build.ts --watch",
 		"check": "pnpm lint:fix && pnpm format",
 		"lint": "eslint \"src/**/*.ts\"",
 		"lint:fix": "eslint \"src/**/*.ts\" --fix",

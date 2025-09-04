@@ -1,8 +1,9 @@
-const esbuild = require("esbuild");
+import * as esbuild from "esbuild";
+import * as fs from "fs";
 
 const isWatchMode = process.argv.includes("--watch");
 
-const buildConfig = {
+const buildConfig: esbuild.BuildOptions = {
 	entryPoints: ["src/index.ts"],
 	bundle: true,
 	platform: "node",
@@ -16,7 +17,7 @@ const buildConfig = {
 	metafile: true,
 };
 
-const build = async () => {
+const build = async (): Promise<void> => {
 	try {
 		if (isWatchMode) {
 			const ctx = await esbuild.context(buildConfig);
@@ -25,12 +26,14 @@ const build = async () => {
 			console.log("Exiting esbuild in watch mode...");
 		} else {
 			const result = await esbuild.build(buildConfig);
-			
+
 			// Write metafile for bundle analysis
-			require("fs").writeFileSync(
-				"dist/meta.json",
-				JSON.stringify(result.metafile, null, 2),
-			);
+			if (result.metafile) {
+				fs.writeFileSync(
+					"dist/meta.json",
+					JSON.stringify(result.metafile, null, 2),
+				);
+			}
 			console.log("Build completed successfully!");
 		}
 	} catch (error) {
@@ -39,4 +42,4 @@ const build = async () => {
 	}
 };
 
-build();
+void build();
