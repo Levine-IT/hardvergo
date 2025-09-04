@@ -80,6 +80,6 @@ export class PersistantImage implements S3Image {
 	 * Relative path without bucket
 	 */
 	getKey(): string {
-		return `${this.userId.toString()}/${this.fileName}`;
+		return `${this.userId.toString()}/${this.listingId.toString()}/${this.fileName}`;
 	}
 }
