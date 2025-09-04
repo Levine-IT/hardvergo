@@ -60,7 +60,7 @@ export class ListingImageService {
 			new DraftImage(
 				this.imageConfig.draftBucketName,
 				userId,
-				`${uuidv4()}.jpg`,
+				`${uuidv4()}.${fileExtension}`,
 			),
 		);
 
