@@ -1,5 +1,4 @@
 import type { DatabaseClient } from "@hardvergo/database";
-import { isDatabaseEnabled } from "./database";
 import type { LamdbaLogger } from "./lamdba-logger";
 
 export class DatabaseRecorder {
@@ -19,13 +18,6 @@ export class DatabaseRecorder {
 		fileSize: number,
 		format: string,
 	): Promise<void> {
-		if (!isDatabaseEnabled()) {
-			this.logger.info(
-				"Database operations disabled, skipping variant recording",
-			);
-			return;
-		}
-
 		try {
 			this.logger.info(
 				"Testing database connection and recording variant",
