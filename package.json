@@ -3,11 +3,13 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
+    "build:backend": "turbo run build --filter=!frontend",
     "build-storybook": "storybook build",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "check": "turbo check",
     "dev": "turbo dev",
+    "dev:backend": "turbo dev --filter=!frontend",
     "format": "turbo format",
     "lint": "turbo lint",
     "lint:fix": "turbo lint:fix",

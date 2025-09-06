@@ -4,12 +4,12 @@
 export class DraftListingImageUploadRequest {
 	constructor(
 		readonly url: string,
-		readonly headers: DraftListingImageUploadRequestHeaders,
+		readonly fields: DraftListingImageUploadRequestFields,
 		readonly expirationSeconds: number,
 	) {}
 }
 
-export class DraftListingImageUploadRequestHeaders {
+export class DraftListingImageUploadRequestFields {
 	constructor(
 		readonly bucket: string,
 		readonly xAmzAlgorithm: string,

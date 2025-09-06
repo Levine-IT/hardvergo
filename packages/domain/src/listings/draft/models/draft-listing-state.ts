@@ -1,37 +1,44 @@
-export class DraftListingState {
-	private constructor(private readonly value: string) {}
+import { ValueObject } from "@/value-object";
+
+export class DraftListingState implements ValueObject<string> {
+	private constructor(public readonly value: string) {}
 
 	static create(jsonState: string): DraftListingState {
 		const validation = DraftListingState.validateJSON(jsonState);
 		if (validation.valid === false) {
 			throw new Error(
-				`Draft listing state has to be a valid json, error: ${validation.error}`,
+				`Draft listing state must be valid JSON. Error: ${validation.error}`,
 			);
 		}
 
-		return new DraftListingState(jsonState);
+		const canonical = JSON.stringify(jsonState); // minified, stable whitespace
+		if (canonical.length > 100_000) {
+			throw new Error("Draft listing state exceeds 100KB.");
+		}
+
+		return new DraftListingState(canonical);
 	}
 
 	private static validateJSON(jsonString: string): {
 		valid: boolean;
-		error?: string;
+		error: string;
 	} {
 		try {
-			JSON.parse(jsonString);
-			return { valid: true };
+			const parsed: unknown = JSON.parse(jsonString);
+
+			if (parsed === null || typeof parsed !== "object") {
+				return {
+					valid: false,
+					error: "Draft listing state must be a JSON object.",
+				};
+			}
+
+			return { valid: true, error: "" };
 		} catch (error) {
 			return {
 				valid: false,
 				error: error instanceof Error ? error.message : String(error),
 			};
 		}
-	}
-
-	toString(): string {
-		return this.value;
-	}
-
-	equals(other: DraftListingState): boolean {
-		return this.value === other.value;
 	}
 }
