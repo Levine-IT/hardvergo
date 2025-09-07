@@ -1,7 +1,6 @@
 {
   "extends": "../typescript-config/package-base.json",
   "compilerOptions": {
-    "noImplicitAny": false, // Needed because of Drizzle
     "baseUrl": "./",
     "paths": {
       "@/*": [
