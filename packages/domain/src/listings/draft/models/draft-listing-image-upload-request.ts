@@ -1,3 +1,5 @@
+import { UserId } from "@/user";
+
 /**
  * S3 compatible pre-signed post request
  */
@@ -6,6 +8,7 @@ export class DraftListingImageUploadRequest {
 		readonly url: string,
 		readonly fields: DraftListingImageUploadRequestFields,
 		readonly expirationSeconds: number,
+		readonly userId: UserId,
 	) {}
 }
 

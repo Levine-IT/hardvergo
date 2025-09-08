@@ -8,19 +8,24 @@
     "build": "tsc",
     "dev": "tsc --watch",
     "check": "pnpm lint:fix && pnpm format",
-		"lint": "eslint \"src/**/*.ts\"",
-		"lint:fix": "eslint \"src/**/*.ts\" --fix",
-		"format": "eslint \"src/**/*.ts\" --fix",
+    "lint": "eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix",
+    "format": "eslint \"src/**/*.ts\" --fix",
     "type-check": "tsc --noEmit"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.883.0",
+    "@aws-sdk/s3-presigned-post": "^3.883.0",
+    "@hardvergo/application": "workspace:*",
+    "@hardvergo/domain": "workspace:*"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-		"@eslint/js": "^9.31.0",
+    "@eslint/js": "^9.31.0",
     "@types/node": "^22.0.0",
     "eslint": "^9.34.0",
-		"eslint-config-prettier": "^10.1.8",
-		"eslint-plugin-prettier": "^5.5.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.0.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.37.0"
