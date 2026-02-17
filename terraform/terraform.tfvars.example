@@ -1,0 +1,9 @@
+aws_region   = "eu-central-1"
+project_name = "hardvergo"
+environment  = "dev"
+
+db_username = "postgres"
+db_password = "hardvergo123!"
+
+app_image = "containous/whoami"
+app_port  = 80
